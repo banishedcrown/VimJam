@@ -32,6 +32,7 @@ public class PlayerAI : MonoBehaviour
         foreach (GameObject g in GameObject.FindGameObjectsWithTag("Treasure"))
         {
             goals.Add(g);
+            print(g.name);
         }
         ChangePlayerState(PlayerStates.IDLE);
        
@@ -47,7 +48,7 @@ public class PlayerAI : MonoBehaviour
         {
             case PlayerStates.IDLE:
                 m_nav.destination = gameObject.transform.position;
-
+                //print("max vs elapsed" + maxIdleDelay + "," + idleTimer.Elapsed());
                 if (idleTimer.Elapsed() > maxIdleDelay)
                 {
                     ChangePlayerState(PlayerStates.DISTRACTED);
@@ -62,7 +63,10 @@ public class PlayerAI : MonoBehaviour
                 }
                 break;
             case PlayerStates.DISTRACTED:
-                
+                if(minDest != null)
+                {
+                    minDistance = Vector2.Distance(transform.position, minDest.transform.position);
+                }
                 foreach(GameObject g in goals)
                 {
                     float d;
@@ -128,4 +132,13 @@ public class PlayerAI : MonoBehaviour
         }
     }
 
+
+    public void RemoveGoal(GameObject g)
+    {
+        goals.Remove(g);
+        minDest = null;
+        minDistance = float.PositiveInfinity;
+        GameObject.Destroy(g);
+        ChangePlayerState(PlayerStates.IDLE);
+    }
 }

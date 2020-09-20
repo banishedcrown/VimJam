@@ -166,7 +166,7 @@ PrefabInstance:
     - target: {fileID: 6964794085374528794, guid: e656ad5d7b5986e41a1766c9ad3be433,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6964794085374528794, guid: e656ad5d7b5986e41a1766c9ad3be433,
         type: 3}
@@ -379,7 +379,7 @@ PrefabInstance:
     - target: {fileID: 6964794085374528794, guid: e656ad5d7b5986e41a1766c9ad3be433,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6964794085374528794, guid: e656ad5d7b5986e41a1766c9ad3be433,
         type: 3}
@@ -531,7 +531,7 @@ PrefabInstance:
     - target: {fileID: 6964794085374528794, guid: e656ad5d7b5986e41a1766c9ad3be433,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6964794085374528794, guid: e656ad5d7b5986e41a1766c9ad3be433,
         type: 3}
@@ -670,7 +670,7 @@ MonoBehaviour:
   _speed: 3.5
   _angularSpeed: 120
   _acceleration: 8
-  _stoppingDistance: 0
+  _stoppingDistance: 0.25
   _autoBraking: 1
   _radius: 0.5
   _quality: 0

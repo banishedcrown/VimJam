@@ -9,7 +9,7 @@ public class GoalController : MonoBehaviour
         print("trigger entered!");
         if (collision.gameObject.tag == "Player")
         {
-            GameObject.Destroy(gameObject);
+            collision.gameObject.SendMessage("RemoveGoal", gameObject);
         }
     }
 }
