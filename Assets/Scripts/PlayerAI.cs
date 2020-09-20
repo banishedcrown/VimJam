@@ -13,6 +13,8 @@ public class PlayerAI : MonoBehaviour
     [Range(1, 10)]
     public float hearingRange = 4, seeingRange = 10;
 
+    Animator m_animator;
+
     NavMeshAgent2D m_nav;
     List<GameObject> goals;
 
@@ -35,7 +37,7 @@ public class PlayerAI : MonoBehaviour
             print(g.name);
         }
         ChangePlayerState(PlayerStates.IDLE);
-       
+        m_animator = GetComponent<Animator>();
     }
 
     GameObject minDest;
@@ -111,6 +113,10 @@ public class PlayerAI : MonoBehaviour
         {
             spawnedPointer = false;
         }
+
+        m_animator.SetFloat("VerticalSpeed", m_nav.velocity.normalized.y);
+        m_animator.SetFloat("HorizontalSpeed", m_nav.velocity.normalized.x);
+
     }
 
 
