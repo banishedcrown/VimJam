@@ -6,6 +6,11 @@ public class QuickTimer : MonoBehaviour
 {
     private float startedTime;
     // Start is called before the first frame update
+
+    QuickTimer()
+    {
+        Start();
+    }
     public void Start()
     {
         startedTime = Time.time;
