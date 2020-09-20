@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuickTimer : MonoBehaviour
+public class QuickTimer
 {
     private float startedTime;
     // Start is called before the first frame update
-    public void Start()
+
+    public QuickTimer()
     {
         startedTime = Time.time;
     }
-
     public float Elapsed()
     {
         return Time.time - startedTime;
@@ -18,6 +18,6 @@ public class QuickTimer : MonoBehaviour
 
     public void Reset()
     {
-        Start();
+        startedTime = Time.time;
     }
 }
