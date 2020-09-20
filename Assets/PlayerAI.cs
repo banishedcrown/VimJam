@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class PlayerAI : MonoBehaviour
@@ -17,13 +18,16 @@ public class PlayerAI : MonoBehaviour
 
     enum PlayerStates { IDLE, SNEAKING, DISTRACTED, CAUGHT};
     PlayerStates state;
+
+    QuickTimer idleTimer;
     
     void Start()
     {
         m_nav = gameObject.GetComponent<NavMeshAgent2D>();
 
         goals = GameObject.FindGameObjectsWithTag("Treasure");
-        state = PlayerStates.IDLE;
+        changePlayerState(PlayerStates.IDLE);
+        idleTimer.Start();
     }
 
     // Update is called once per frame
@@ -39,7 +43,7 @@ public class PlayerAI : MonoBehaviour
                 
                 if(Vector2.Distance(transform.position, m_nav.destination) < m_nav.stoppingDistance)
                 {
-                    state = PlayerStates.IDLE;
+                    changePlayerState(PlayerStates.IDLE);
                 }
                 break;
             case PlayerStates.DISTRACTED:
@@ -69,7 +73,7 @@ public class PlayerAI : MonoBehaviour
             if (state != PlayerStates.CAUGHT && Vector2.Distance(w, transform.position) < hearingRange)
             {
                 GetComponent<NavMeshAgent2D>().destination = w;
-                state = PlayerStates.SNEAKING;
+                changePlayerState(PlayerStates.SNEAKING);
             }
         }
         else
@@ -77,4 +81,16 @@ public class PlayerAI : MonoBehaviour
             spawnedPointer = false;
         }
     }
+
+
+    private void changePlayerState(PlayerStates newState)
+    {
+        switch (newState)
+        {
+            case PlayerStates.IDLE:
+                state = PlayerStates.IDLE;
+                break;
+        }
+    }
+
 }
