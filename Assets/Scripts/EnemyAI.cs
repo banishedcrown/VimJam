@@ -6,14 +6,14 @@ public class EnemyAI : MonoBehaviour
 {
     private enum EnemyState { IDLE, WANDER, PERSUE };
     private EnemyState state;
-    private QuickTimer timer;
+    private float timerStart;
     private float idleTime = 3; //3s
     private float wanderTime = 8; //8s
 
     // Start is called before the first frame update
     void Start()
     {
-        timer = new QuickTimer();
+        timerStart = Time.time;
     }
 
     // Update is called once per frame
@@ -25,6 +25,7 @@ public class EnemyAI : MonoBehaviour
             case EnemyState.IDLE:
                 break;
             case EnemyState.WANDER:
+                //transform.children
                 break;
             case EnemyState.PERSUE:
                 break;
@@ -34,30 +35,32 @@ public class EnemyAI : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(state == EnemyState.PERSUE && canSeePlayer())
+        var timeElapsed = Time.time - timerStart;
+        if (state == EnemyState.PERSUE && canSeePlayer())
         {
             return;
         }
         else
         {
             state = EnemyState.IDLE;
-            timer.Reset();
+            timerStart = Time.time;
         }
-        if(state == EnemyState.IDLE && timer.elapsed > idleTime)
+
+        if (state == EnemyState.IDLE && timeElapsed > idleTime)
         {
             state = EnemyState.WANDER;
-            timer.Reset();
+            timerStart = Time.time;
         }
-        else if(state == EnemyState.WANDER && timer.elapsed > wanderTime)
+        else if (state == EnemyState.WANDER && timeElapsed > wanderTime)
         {
             state = EnemyState.IDLE;
-            timer.Reset();
+            timerStart = Time.time;
         }
         //Switch states here
     }
 
     private bool canSeePlayer()
     {
-
         return false;
     }
+}

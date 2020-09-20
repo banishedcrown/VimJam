@@ -31,7 +31,7 @@ public class PlayerAI : MonoBehaviour
             goals.Add(g);
         }
         ChangePlayerState(PlayerStates.IDLE);
-        idleTimer = new QuickTimer;
+        idleTimer = new QuickTimer();
     }
 
     GameObject minDest;
