@@ -22,16 +22,19 @@ public class PlayerAI : MonoBehaviour
     QuickTimer idleTimer;
     private float maxIdleDelay = 3f;
 
-    void Start()
-    {
-        m_nav = gameObject.GetComponent<NavMeshAgent2D>();
 
-        foreach(GameObject g in GameObject.FindGameObjectsWithTag("Treasure"))
+    private void Start()
+    {
+        idleTimer = new QuickTimer();
+
+        m_nav = gameObject.GetComponent<NavMeshAgent2D>();
+        goals = new List<GameObject>();
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Treasure"))
         {
             goals.Add(g);
         }
         ChangePlayerState(PlayerStates.IDLE);
-        idleTimer = new QuickTimer;
+       
     }
 
     GameObject minDest;
@@ -115,6 +118,12 @@ public class PlayerAI : MonoBehaviour
                 state = PlayerStates.IDLE;
                 idleTimer.Reset();
                 maxIdleDelay = Random.Range(2f, 5f);
+                break;
+
+            case PlayerStates.DISTRACTED:
+            case PlayerStates.SNEAKING:
+            case PlayerStates.CAUGHT:
+                state = newState;
                 break;
         }
     }
