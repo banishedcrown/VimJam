@@ -9,13 +9,8 @@ public class QuickTimer
 
     public QuickTimer()
     {
-        Start();
-    }
-    public void Start()
-    {
         startedTime = Time.time;
     }
-
     public float Elapsed()
     {
         return Time.time - startedTime;
@@ -23,6 +18,6 @@ public class QuickTimer
 
     public void Reset()
     {
-        Start();
+        startedTime = Time.time;
     }
 }
