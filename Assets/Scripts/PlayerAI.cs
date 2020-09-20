@@ -99,7 +99,7 @@ public class PlayerAI : MonoBehaviour
             if (!spawnedPointer)
             {
                 w.z = 0;
-                GameObject.Instantiate(pointer, w, Quaternion.identity);
+                GameObject.Instantiate(pointer, w, pointer.transform.rotation);
                 spawnedPointer = true;
             }
 
@@ -116,6 +116,12 @@ public class PlayerAI : MonoBehaviour
 
         m_animator.SetFloat("VerticalSpeed", m_nav.velocity.normalized.y);
         m_animator.SetFloat("HorizontalSpeed", m_nav.velocity.normalized.x);
+
+        if(m_nav.velocity != Vector2.zero)
+        {
+            m_animator.SetFloat("LastVerticalSpeed", m_nav.velocity.normalized.y);
+            m_animator.SetFloat("LastHorizontalSpeed", m_nav.velocity.normalized.x);
+        }
 
     }
 
