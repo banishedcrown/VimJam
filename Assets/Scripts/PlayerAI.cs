@@ -14,21 +14,28 @@ public class PlayerAI : MonoBehaviour
     public float hearingRange = 4, seeingRange = 10;
 
     NavMeshAgent2D m_nav;
-    GameObject[] goals;
+    List<GameObject> goals;
 
     enum PlayerStates { IDLE, SNEAKING, DISTRACTED, CAUGHT};
     PlayerStates state;
 
     QuickTimer idleTimer;
-    
+    private float maxIdleDelay = 3f;
+
     void Start()
     {
         m_nav = gameObject.GetComponent<NavMeshAgent2D>();
 
-        goals = GameObject.FindGameObjectsWithTag("Treasure");
-        changePlayerState(PlayerStates.IDLE);
-        idleTimer.Start();
+        foreach(GameObject g in GameObject.FindGameObjectsWithTag("Treasure"))
+        {
+            goals.Add(g);
+        }
+        ChangePlayerState(PlayerStates.IDLE);
+        idleTimer = new QuickTimer();
     }
+
+    GameObject minDest;
+    float minDistance = float.PositiveInfinity;
 
     // Update is called once per frame
     void Update()
@@ -38,15 +45,32 @@ public class PlayerAI : MonoBehaviour
             case PlayerStates.IDLE:
                 m_nav.destination = gameObject.transform.position;
 
+                if (idleTimer.Elapsed() > maxIdleDelay)
+                {
+                    ChangePlayerState(PlayerStates.DISTRACTED);
+                }
+
                 break;
             case PlayerStates.SNEAKING:
                 
                 if(Vector2.Distance(transform.position, m_nav.destination) < m_nav.stoppingDistance)
                 {
-                    changePlayerState(PlayerStates.IDLE);
+                    ChangePlayerState(PlayerStates.IDLE);
                 }
                 break;
             case PlayerStates.DISTRACTED:
+                
+                foreach(GameObject g in goals)
+                {
+                    float d;
+                    if (( d = Vector2.Distance(transform.position, g.transform.position)) < minDistance)
+                    {
+                        minDistance = d;
+                        minDest = g;
+                    }
+                        
+                }
+                m_nav.destination = minDest.transform.position;
 
                 break;
             case PlayerStates.CAUGHT:
@@ -73,7 +97,7 @@ public class PlayerAI : MonoBehaviour
             if (state != PlayerStates.CAUGHT && Vector2.Distance(w, transform.position) < hearingRange)
             {
                 GetComponent<NavMeshAgent2D>().destination = w;
-                changePlayerState(PlayerStates.SNEAKING);
+                ChangePlayerState(PlayerStates.SNEAKING);
             }
         }
         else
@@ -83,12 +107,14 @@ public class PlayerAI : MonoBehaviour
     }
 
 
-    private void changePlayerState(PlayerStates newState)
+    private void ChangePlayerState(PlayerStates newState)
     {
         switch (newState)
         {
             case PlayerStates.IDLE:
                 state = PlayerStates.IDLE;
+                idleTimer.Reset();
+                maxIdleDelay = Random.Range(2f, 5f);
                 break;
         }
     }

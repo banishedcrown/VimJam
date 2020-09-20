@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuickTimer : MonoBehaviour
+public class QuickTimer
 {
     private float startedTime;
     // Start is called before the first frame update
 
-    QuickTimer()
+    public QuickTimer()
     {
         Start();
     }
