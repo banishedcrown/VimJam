@@ -298,7 +298,7 @@ public class NavMeshAgent2D : MonoBehaviour
     {
         foreach(DebugLabel d in debugLabels)
         {
-            Handles.Label(d.position, d.output);
+            //Handles.Label(d.position, d.output);
         }
     }
 

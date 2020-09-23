@@ -81,7 +81,7 @@ public class EnemyAI : MonoBehaviour
                 else
                 {
                     //Set destination to player's current position
-                    m_nav.SetDestination(player.transform.position);
+                    m_nav.destination = player.transform.position;
                 }
                 break;
             default: break;
@@ -122,7 +122,7 @@ public class EnemyAI : MonoBehaviour
     {
         //set destination to player's location
         state = EnemyState.PERSUE;
-        m_nav.SetDestination(player.transform.position);
+        m_nav.destination = player.transform.position;
     }
 
     private bool canSeePlayer()
