@@ -5,11 +5,15 @@ using UnityEngine;
 
 public class PlayerAI : MonoBehaviour
 {
+    // Start is called before the first frame update
+
     public GameObject pointer;
     private bool spawnedPointer = false;
 
     [Range(1, 10)]
     public float hearingRange = 4, seeingRange = 10;
+
+    Animator m_animator;
 
     NavMeshAgent2D m_nav;
     List<GameObject> goals;
@@ -30,8 +34,10 @@ public class PlayerAI : MonoBehaviour
         foreach (GameObject g in GameObject.FindGameObjectsWithTag("Treasure"))
         {
             goals.Add(g);
+            print(g.name);
         }
         ChangePlayerState(PlayerStates.IDLE);
+        m_animator = GetComponent<Animator>();
     }
 
     GameObject minDest;
@@ -44,7 +50,7 @@ public class PlayerAI : MonoBehaviour
         {
             case PlayerStates.IDLE:
                 m_nav.destination = gameObject.transform.position;
-
+                //print("max vs elapsed" + maxIdleDelay + "," + idleTimer.Elapsed());
                 if (idleTimer.Elapsed() > maxIdleDelay)
                 {
                     ChangePlayerState(PlayerStates.DISTRACTED);
@@ -59,7 +65,10 @@ public class PlayerAI : MonoBehaviour
                 }
                 break;
             case PlayerStates.DISTRACTED:
-                
+                if(minDest != null)
+                {
+                    minDistance = Vector2.Distance(transform.position, minDest.transform.position);
+                }
                 foreach(GameObject g in goals)
                 {
                     float d;
@@ -90,7 +99,7 @@ public class PlayerAI : MonoBehaviour
             if (!spawnedPointer)
             {
                 w.z = 0;
-                GameObject.Instantiate(pointer, w, Quaternion.identity);
+                GameObject.Instantiate(pointer, w, pointer.transform.rotation);
                 spawnedPointer = true;
             }
 
@@ -104,6 +113,16 @@ public class PlayerAI : MonoBehaviour
         {
             spawnedPointer = false;
         }
+
+        m_animator.SetFloat("VerticalSpeed", m_nav.velocity.normalized.y);
+        m_animator.SetFloat("HorizontalSpeed", m_nav.velocity.normalized.x);
+
+        if(m_nav.velocity != Vector2.zero)
+        {
+            m_animator.SetFloat("LastVerticalSpeed", m_nav.velocity.normalized.y);
+            m_animator.SetFloat("LastHorizontalSpeed", m_nav.velocity.normalized.x);
+        }
+
     }
 
 
@@ -125,4 +144,13 @@ public class PlayerAI : MonoBehaviour
         }
     }
 
+
+    public void RemoveGoal(GameObject g)
+    {
+        goals.Remove(g);
+        minDest = null;
+        minDistance = float.PositiveInfinity;
+        GameObject.Destroy(g);
+        ChangePlayerState(PlayerStates.IDLE);
+    }
 }
