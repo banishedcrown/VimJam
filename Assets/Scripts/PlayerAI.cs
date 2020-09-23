@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerAI : MonoBehaviour
 {
-    // Start is called before the first frame update
-
     public GameObject pointer;
     private bool spawnedPointer = false;
 
@@ -34,7 +32,6 @@ public class PlayerAI : MonoBehaviour
             goals.Add(g);
         }
         ChangePlayerState(PlayerStates.IDLE);
-       
     }
 
     GameObject minDest;
