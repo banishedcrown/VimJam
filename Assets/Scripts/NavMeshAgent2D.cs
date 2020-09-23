@@ -21,8 +21,20 @@ public class NavMeshAgent2D : MonoBehaviour
     [SerializeField] float _stoppingDistance = 0.25f;
     [SerializeField] bool _autoBraking = true; // false is too weird, true by default.
 
-    
-    public Vector2 destination { get; set; }
+
+    public Vector2 _destination;
+    public Vector2 destination
+    {
+        get { return _destination; }
+        set {
+            if (_destination != value)
+            {
+                pathComplete = false;
+                pathFound = false;
+            }
+            _destination = value; 
+        }
+    }
     public Vector2 velocity { get; set; }
 
     public int width = 50, height = 50;
@@ -45,7 +57,7 @@ public class NavMeshAgent2D : MonoBehaviour
     public class PathNode
     {
         public Node node;
-        public Node parent;
+        public PathNode parent;
 
         public PathNode(Vector2 position, Vector2 worldPosition)
         {
@@ -53,7 +65,7 @@ public class NavMeshAgent2D : MonoBehaviour
             node.WorldPosition = worldPosition;
         }
 
-        public PathNode(Node me, Node parent)
+        public PathNode(Node me, PathNode parent)
         {
             node = me;
             this.parent = parent;
@@ -65,6 +77,7 @@ public class NavMeshAgent2D : MonoBehaviour
     private Node[,] searchMap;
 
     private LinkedList<PathNode> nodePath;
+    private bool pathFound = false, pathComplete = false;
 
     // Start is called before the first frame update
     void Start()
@@ -82,6 +95,8 @@ public class NavMeshAgent2D : MonoBehaviour
             bakedMap = new Node[width, height];         
             BakeMap();
         }
+
+        debugLabels = new List<DebugLabel>();
     }
 
     // Update is called once per frame
@@ -89,16 +104,46 @@ public class NavMeshAgent2D : MonoBehaviour
     {
         velocity = r_body.velocity;
 
-        if(oldDestination != destination)
+        if(oldDestination != destination && !pathFound)
         {
             //we got a new location, let's calculate it.
             searchMap = new Node[width, height];
             //Array.Copy(bakedMap, searchMap, bakedMap.Length);
             RePath(transform.position, 0);
         }
-
-        
-
+        else if(oldDestination != destination && pathComplete)
+        {
+            if (nodePath.Count != 0)
+            {
+                if(currentDestination == null)
+                {
+                    currentDestination = nodePath.First.Value;
+                }
+                if (Vector2.Distance(transform.position, currentDestination.node.WorldPosition) > stoppingDistance)
+                {
+                    Vector2 move_dir = (Vector3)currentDestination.node.WorldPosition - transform.position;
+                    r_body.velocity = move_dir.normalized * _speed;
+                }
+                else
+                {
+                    nodePath.Remove(currentDestination);
+                    currentDestination = null;
+                    r_body.velocity = Vector2.zero;
+                }
+            }
+            else
+            {
+                Vector2 move_dir = (Vector3)destination - transform.position;
+                if (Vector2.Distance(transform.position, destination) > stoppingDistance)
+                {
+                    r_body.velocity = move_dir.normalized * _speed;
+                }
+                else
+                {
+                    r_body.velocity = Vector2.zero;
+                }
+            }
+        }
     }
 
     private void RePath(Vector2 position, int movecost)
@@ -107,76 +152,6 @@ public class NavMeshAgent2D : MonoBehaviour
         int convY = height / 2 + offsetMap.y;
 
         Vector2 convPos = new Vector2(convX, convY);
-
-        print("start position:" + position + "vs " + destination);
-
-        Vector2Int origin = new Vector2Int(width / 2, height / 2);
-        /*int convX = (int)position.x + origin.x;
-        int convY = (int)position.y + origin.y;*/
-
-        int startx = Mathf.RoundToInt(position.x + convX);
-        int starty = Mathf.RoundToInt(position.y + convY);
-
-        int minCost = int.MaxValue;
-        Vector2 minNode = Vector2.zero;
-
-        /*for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                
-                if (!bakedMap[x, y].closed)
-                {
-                tiles[0].SetTile(new Vector3Int(x - convX, y - convY, 0), testTile);
-                }
-                else
-                {
-                tiles[0].SetTile(new Vector3Int(x - convX, y - convY, 0), testTile2);
-                }
-            }
-        }
-
-        return;*/
-        /*for (int x = startx - 1; x <= startx + 1; x++) //let's check all 9 spots. 
-        {
-            for (int y = starty - 1; y <= starty + 1; y++)
-            {
-                *//*for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {*//*
-                if (!bakedMap[x, y].closed && !searchMap[x, y].closed)
-                {
-                    searchMap[x, y].nodeCost = (x == y? movecost +10 : movecost);
-                    searchMap[x, y].nodeToGoalCost = ManhattanDistance(position, destination);
-                    int F = searchMap[x, y].nodeCost + searchMap[x, y].nodeToGoalCost;
-                    tiles[0].SetTile(new Vector3Int(x - convX, y - convY, 0), FreeTile);
-
-                    if (minCost > F)
-                    {
-                        minCost = F;
-                        minNode = new Vector2(x, y);
-                        position = minNode - origin;
-                        print("position:" + position + "vs " + destination);
-                        navPath.Add(position);
-                    }
-                    if (minCost == F)
-                    {
-                        minNode = new Vector2(x, y);
-                        position = minNode - origin;
-                        navPath.Add(position);
-                    }
-
-                    
-                }
-                else
-                {
-                    tiles[0].SetTile(new Vector3Int( x - convX, y - convY, 0), ClosedTile);
-                }
-
-                if (searchMap[x, y].touched) return -1;
-            }
-        }*/
 
         List<PathNode> openList = new List<PathNode>();
         LinkedList<PathNode> closedList = new LinkedList<PathNode>();
@@ -218,11 +193,12 @@ public class NavMeshAgent2D : MonoBehaviour
                     continue;
                 if (!SearchForNode(openList,aSquare))
                 {
-                    aSquare.node.nodeCost = movecost;
+                    aSquare.node.nodeCost += movecost;
                     aSquare.node.nodeToGoalCost = ManhattanDistance(position, destination);
                     aSquare.node.F = aSquare.node.nodeCost + aSquare.node.nodeToGoalCost;
-                    aSquare.parent = currentSquare.node;
+                    aSquare.parent = currentSquare;
                     openList.Add(aSquare);
+
                 }
                 else
                 {
@@ -233,7 +209,8 @@ public class NavMeshAgent2D : MonoBehaviour
                     if (F < prevF)
                     {
                         aSquare.node.F = F;
-                        aSquare.parent = currentSquare.node;
+                        aSquare.parent = currentSquare;
+                        ReplaceNode(openList, aSquare);
                     }
                 }
             }
@@ -241,44 +218,108 @@ public class NavMeshAgent2D : MonoBehaviour
             movecost++;
         } while (openList.Count != 0);
 
-        /*print("minNode:" + minNode);
-        print("node Data: " + searchMap[(int)minNode.x, (int)minNode.y]);
-
-
-       *//* position = minNode - origin;
-        print("position:" + position + "vs " + destination);
-        navPath.Add(position);*//*
-
-        movecost++;
-
-        if (position == destination) return 1;
-        if(navPath.Count > 20) throw new Exception();
-        else return RePath(position, movecost);*/
-        foreach(PathNode n in closedList)
+       
+        int count = 0;
+        debugLabels.Clear();
+        /*foreach(PathNode n in closedList)
         {
             Vector2Int pos = Vector2Int.RoundToInt(n.node.WorldPosition);
             int x = pos.x;
             int y = pos.y;
-            tiles[0].SetTile(new Vector3Int(x, y, 0), FreeTile);
-        }
+            tiles[0].SetTile(new Vector3Int((int)n.parent.WorldPosition.x, (int)n.parent.WorldPosition.y,0), FreeTile);
+            debugLabels.Add(new DebugLabel(pos, count.ToString()));
+            //debugLabels.Add(new DebugLabel(pos - new Vector2(0,0.2f), n.parent.WorldPosition.ToString()));
+            count++;
+        }*/
+
+        PathNode nnode = closedList.Last.Value;
+
+        do
+        {
+            /*PathNode min = nnode;
+            foreach(PathNode n in closedList)
+            {
+                if(n.node.WorldPosition == nnode.node.WorldPosition)
+                {
+                    int nodeCost = count;
+                    int nodeToGoalCost = ManhattanDistance(n.node.WorldPosition, transform.position);
+                    int F = nodeCost + nodeToGoalCost;
+                    if (F < min.node.F)
+                    {
+                        min = n;
+                    }
+                }
+            }
+            nnode = min;*/
+            
+            Vector2Int pos = Vector2Int.RoundToInt(nnode.node.WorldPosition);
+            int x = pos.x;
+            int y = pos.y;
+            tiles[0].SetTile(new Vector3Int((int)nnode.node.WorldPosition.x, (int)nnode.node.WorldPosition.y, 0), FreeTile);
+            debugLabels.Add(new DebugLabel(pos, count.ToString() + ":" + nnode.node.F));
+            count++;
+            nodePath.AddFirst(nnode);
+            nnode = nnode.parent;
+        } while (nnode != null);
+
+        pathComplete = true;
+        pathFound = true;
         print("pathing completed");
 
     }
 
+    private void ReplaceNode(List<PathNode> list, PathNode aSquare)
+    {
+        foreach (PathNode n in list)
+        {
+            if (Vector2Int.RoundToInt(n.node.MapPosition) == Vector2Int.RoundToInt(aSquare.node.MapPosition))
+            {
+                list.Remove(n);
+                list.Add(aSquare);
+            }
+
+        }
+    }
+
+    public class DebugLabel
+    {
+        public Vector3 position;
+        public string output;
+
+        public DebugLabel(Vector2 pos, string str)
+        {
+            position = pos;
+            output = str;
+        }
+    }
+    List<DebugLabel> debugLabels;
+
+    void OnGUI()
+    {
+        foreach(DebugLabel d in debugLabels)
+        {
+            Handles.Label(d.position, d.output);
+        }
+    }
+
     private bool SearchForNode(LinkedList<PathNode> list, PathNode aSquare)
     {
-        foreach(PathNode n in list)
+        if (list.Count != 0)
+        foreach (PathNode n in list)
         {
-            if (Vector2Int.RoundToInt(n.node.MapPosition) == Vector2Int.RoundToInt(aSquare.node.MapPosition)) return true;
+            if (Vector2Int.RoundToInt(n.node.MapPosition) == Vector2Int.RoundToInt(aSquare.node.MapPosition)) 
+                return true;
         }
         return false;
     }
 
     private bool SearchForNode(List<PathNode> list, PathNode aSquare)
     {
+        if(list.Count != 0)
         foreach (PathNode n in list)
         {
-            if (Vector2Int.RoundToInt(n.node.MapPosition) == Vector2Int.RoundToInt(aSquare.node.MapPosition)) return true;
+            if (Vector2Int.RoundToInt(n.node.MapPosition) == Vector2Int.RoundToInt(aSquare.node.MapPosition)) 
+                return true;
         }
         return false;
     }
@@ -293,18 +334,28 @@ public class NavMeshAgent2D : MonoBehaviour
 
         List<PathNode> neighbors = new List<PathNode>();
 
-        for (int x = startx - 1; x <= startx + 1; x++) //let's check all 9 spots. 
+        
+        if (bakedMap[startx-1, starty].closed == false)
         {
-            for (int y = starty - 1; y <= starty + 1; y++)
-            {
-
-                if(bakedMap[x,y].closed == false)
-                {
-                    neighbors.Add(new PathNode(bakedMap[x,y],node.node));
-
-                }
-            }
+            neighbors.Add(new PathNode(bakedMap[startx - 1, starty], node)); 
         }
+
+        if (bakedMap[startx + 1, starty].closed == false)
+        {
+            neighbors.Add(new PathNode(bakedMap[startx + 1, starty], node));
+        }
+
+        if (bakedMap[startx , starty - 1].closed == false)
+        {
+            neighbors.Add(new PathNode(bakedMap[startx, starty - 1], node));
+        }
+
+        if (bakedMap[startx , starty + 1].closed == false)
+        {
+            neighbors.Add(new PathNode(bakedMap[startx, starty + 1], node));
+        }
+
+
 
         return neighbors;
     }
@@ -332,7 +383,7 @@ public class NavMeshAgent2D : MonoBehaviour
                 int F = n.node.nodeCost + n.node.nodeToGoalCost;*/
                 int F = n.node.F;
                 //tiles[0].SetTile(new Vector3Int(x - convX, y - convY, 0), FreeTile);
-
+                print("Fnode: " + F);
                 if (minCost > F)
                 {
                     minCost = F;
@@ -340,7 +391,7 @@ public class NavMeshAgent2D : MonoBehaviour
                 }
                 if (minCost == F)
                 {
-                    minNode = n;
+                    //minNode = n;
                 }
             }
             else
@@ -348,11 +399,14 @@ public class NavMeshAgent2D : MonoBehaviour
                 tiles[0].SetTile(new Vector3Int(x - convX, y - convY, 0), ClosedTile);
             }
         }
+        print("minCost: " + minCost);
         return minNode;
     }
 
     public Tile ClosedTile;
     public Tile FreeTile;
+    private PathNode currentDestination;
+
     private void BakeMap()
     {
         int convX = width / 2 + offsetMap.x;
@@ -367,7 +421,7 @@ public class NavMeshAgent2D : MonoBehaviour
                     if ( newTile != null)
                     {
                         bakedMap[x , y].closed = true;
-                        //t.SetTile(new Vector3Int(x - convX, y - convY, 0), ClosedTile);
+                        t.SetTile(new Vector3Int(x - convX, y - convY, 0), ClosedTile);
                     }
                     else
                     {
