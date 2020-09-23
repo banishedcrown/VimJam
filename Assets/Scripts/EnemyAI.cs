@@ -4,63 +4,133 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
+    NavMeshAgent2D m_nav;
+    [SerializeField]
+    List<GameObject> goals;
+
     private enum EnemyState { IDLE, WANDER, PERSUE };
     private EnemyState state;
-    private float timerStart;
-    private float idleTime = 3; //3s
-    private float wanderTime = 8; //8s
+    private QuickTimer timer;
+    private float maxIdleDelay;
+    private float maxWanderTime = 8; //8s
+
+    private float maxHearingDistance = .0001f;
+
+    GameObject player;
 
     // Start is called before the first frame update
     void Start()
     {
-        timerStart = Time.time;
+        timer = new QuickTimer();
+        maxIdleDelay = Random.Range(0.5f, 5f);
+        m_nav = gameObject.GetComponent<NavMeshAgent2D>();
+
+        //Initialize player reference
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length > 1) { print("Error, more than one Player!"); }
+        else if (players.Length < 1) { print("Error, no Player!"); }
+        else { player = players[0]; }
+
+        //Initialize goals if necessary
+        if(goals.Count == 0)
+        {
+            var goalList = GameObject.FindGameObjectsWithTag("EnemyWaypoint");
+            goals = new List<GameObject>(goalList);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Patrol, or wander
+        Debug.Log("Enemy in state " + state.ToString() + "and Player position is "+player.transform.position.ToString());
         switch (state)
         {
             case EnemyState.IDLE:
+                if (canSeePlayer())
+                {
+                    setStatePersue();
+                }
+                else if (timer.Elapsed() > maxIdleDelay) //todo: make the max random
+                {
+                    setStateWander();
+                }
+                //else Leave destination set to self and continue
                 break;
             case EnemyState.WANDER:
-                //transform.children
+                if(canSeePlayer())
+                {
+                    setStatePersue();
+                }
+                //If we've reached our destination
+                else if (destinationReached())
+                {
+                    setStateIdle();
+                }
+                //If we've been wandering for long enough, just stop.
+                else if (state == EnemyState.WANDER && timer.Elapsed() > maxWanderTime)
+                {
+                    setStateIdle();
+                }
                 break;
             case EnemyState.PERSUE:
+                //If we've lost the player, idle.
+                if (!canSeePlayer())
+                {
+                    setStateIdle();
+                }
+                else
+                {
+                    //Set destination to player's current position
+                    m_nav.SetDestination(player.transform.position);
+                }
                 break;
             default: break;
         }
     }
 
-    private void FixedUpdate()
+    private bool destinationReached()
     {
-        var timeElapsed = Time.time - timerStart;
-        if (state == EnemyState.PERSUE && canSeePlayer())
-        {
-            return;
-        }
-        else
-        {
-            state = EnemyState.IDLE;
-            timerStart = Time.time;
-        }
+        return Vector2.Distance(transform.position, m_nav.destination) < m_nav.stoppingDistance;
+    }
 
-        if (state == EnemyState.IDLE && timeElapsed > idleTime)
+    private void setStateIdle()
+    {
+        state = EnemyState.IDLE;
+        maxIdleDelay = Random.Range(0.5f, 5f);
+        timer.Reset();
+        m_nav.destination = gameObject.transform.position;
+    }
+
+    private void setStateWander()
+    {
+        //Set destination, navmesh agent will lhandle the rest (see PlayerAI setState and Sneaking)
+        state = EnemyState.WANDER;
+        timer.Reset();
+        GameObject randGoal;
+        do
         {
-            state = EnemyState.WANDER;
-            timerStart = Time.time;
-        }
-        else if (state == EnemyState.WANDER && timeElapsed > wanderTime)
-        {
-            state = EnemyState.IDLE;
-            timerStart = Time.time;
-        }
-        //Switch states here
+            int randIndex = Random.Range(0, goals.Count);
+            randGoal = goals[randIndex];
+
+        } while(Vector2.Distance(transform.position, randGoal.transform.position) < m_nav.stoppingDistance);
+
+        m_nav.destination = randGoal.transform.position;
+
+    }
+
+    private void setStatePersue()
+    {
+        //set destination to player's location
+        state = EnemyState.PERSUE;
+        m_nav.SetDestination(player.transform.position);
     }
 
     private bool canSeePlayer()
     {
-        return false;
+        Vector2 playerVector = (player.transform.position - gameObject.transform.position).normalized;
+        Debug.Log("Player Direction: " + playerVector.ToString());
+        RaycastHit2D vectorHit = Physics2D.Raycast(gameObject.transform.position, playerVector, maxHearingDistance);
+        Debug.Log("vectorHit " + vectorHit.ToString());
+        return vectorHit;
     }
 }
