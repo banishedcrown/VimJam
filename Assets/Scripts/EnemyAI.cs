@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider2D))]
+
 public class EnemyAI : MonoBehaviour
 {
     NavMeshAgent2D m_nav;
@@ -14,7 +16,7 @@ public class EnemyAI : MonoBehaviour
     private float maxIdleDelay;
     private float maxWanderTime = 8; //8s
 
-    private float maxHearingDistance = .0001f;
+    private float maxHearingDistance = 2f;
 
     GameObject player;
 
@@ -32,7 +34,7 @@ public class EnemyAI : MonoBehaviour
         else { player = players[0]; }
 
         //Initialize goals if necessary
-        if(goals.Count == 0)
+        if(goals.Count == 0 || goals[0]==null)
         {
             var goalList = GameObject.FindGameObjectsWithTag("EnemyWaypoint");
             goals = new List<GameObject>(goalList);
@@ -128,9 +130,16 @@ public class EnemyAI : MonoBehaviour
     private bool canSeePlayer()
     {
         Vector2 playerVector = (player.transform.position - gameObject.transform.position).normalized;
-        Debug.Log("Player Direction: " + playerVector.ToString());
+        //Debug.Log("Player Direction: " + playerVector.ToString());
+
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
         RaycastHit2D vectorHit = Physics2D.Raycast(gameObject.transform.position, playerVector, maxHearingDistance);
-        Debug.Log("vectorHit " + vectorHit.ToString());
-        return vectorHit;
+        gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
+        if (vectorHit && vectorHit.collider.gameObject.tag == "Player")
+        {
+            return true;
+        }
+        else return false;
     }
 }
