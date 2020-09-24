@@ -10,8 +10,10 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
+using System.Threading;
+
 [RequireComponent(typeof(Rigidbody2D))]
-public class NavMeshAgent2D : MonoBehaviour
+public class SelfNavMeshAgent2D : MonoBehaviour
 {
 
     [Header("Steering")]
@@ -43,6 +45,9 @@ public class NavMeshAgent2D : MonoBehaviour
     private Rigidbody2D r_body;
     private Vector2 oldDestination;
     public Tilemap[] tiles;
+
+    private static Thread calcThread;
+    private bool killThreads = false;
 
     public struct Node
     {
@@ -92,11 +97,21 @@ public class NavMeshAgent2D : MonoBehaviour
 
         if (!baked)
         {
-            bakedMap = new Node[width, height];         
+            bakedMap = new Node[width, height];
             BakeMap();
         }
 
         debugLabels = new List<DebugLabel>();
+
+        calcThread = new Thread(calculatorThread);
+        calcThread.Start();
+
+    }
+
+    private void OnDestroy()
+    {
+        killThreads = true;
+        calcThread.Join();
     }
 
     // Update is called once per frame
@@ -109,7 +124,8 @@ public class NavMeshAgent2D : MonoBehaviour
             //we got a new location, let's calculate it.
             searchMap = new Node[width, height];
             //Array.Copy(bakedMap, searchMap, bakedMap.Length);
-            RePath(transform.position, 0);
+            //RePath(transform.position, 0);
+            needsUpdate = true;
         }
         else if(oldDestination != destination && pathComplete)
         {
@@ -142,6 +158,19 @@ public class NavMeshAgent2D : MonoBehaviour
                 {
                     r_body.velocity = Vector2.zero;
                 }
+            }
+        }
+    }
+
+    private bool needsUpdate = false;
+    private void calculatorThread()
+    {
+        while (!killThreads)
+        {
+            if (needsUpdate)
+            {
+                RePath(transform.position, 0);
+                needsUpdate = false;
             }
         }
     }
