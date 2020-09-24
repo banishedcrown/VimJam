@@ -9,14 +9,22 @@ public class EnemyAI : MonoBehaviour
     NavMeshAgent2D m_nav;
     [SerializeField]
     List<GameObject> goals;
+    private int currentGoalIndex = 0;
+    private bool isReversePatroling = false;
 
     private enum EnemyState { IDLE, WANDER, PERSUE };
     private EnemyState state;
     private QuickTimer timer;
-    private float maxIdleDelay;
-    private float maxWanderTime = 8; //8s
+    private float idleDelay;
+    //private float maxWanderTime = 8; //8s
 
-    private float maxHearingDistance = 2f;
+
+    public float maxIdleDelay = 4f;
+    public float minIdleDelay = .5f;
+    public bool followWaypointsInOrder = false;
+    public float maxHearingDistance = 1f;
+    public float maxVisionDistance = 2.5f;
+    public float visionConeAngle = 45; 
 
     GameObject player;
 
@@ -24,7 +32,7 @@ public class EnemyAI : MonoBehaviour
     void Start()
     {
         timer = new QuickTimer();
-        maxIdleDelay = Random.Range(0.5f, 5f);
+        maxIdleDelay = Random.Range(minIdleDelay, maxIdleDelay);
         m_nav = gameObject.GetComponent<NavMeshAgent2D>();
 
         //Initialize player reference
@@ -69,14 +77,14 @@ public class EnemyAI : MonoBehaviour
                     setStateIdle();
                 }
                 //If we've been wandering for long enough, just stop.
-                else if (state == EnemyState.WANDER && timer.Elapsed() > maxWanderTime)
+                else if (state == EnemyState.WANDER ) //&& timer.Elapsed() > maxWanderTime)
                 {
                     setStateIdle();
                 }
                 break;
             case EnemyState.PERSUE:
                 //If we've lost the player, idle.
-                if (!canSeePlayer())
+                if (!canSeePlayer() && m_nav.remainingDistance <= m_nav.stoppingDistance)
                 {
                     setStateIdle();
                 }
@@ -98,7 +106,7 @@ public class EnemyAI : MonoBehaviour
     private void setStateIdle()
     {
         state = EnemyState.IDLE;
-        maxIdleDelay = Random.Range(0.5f, 5f);
+        maxIdleDelay = Random.Range(minIdleDelay, maxIdleDelay);
         timer.Reset();
         m_nav.destination = gameObject.transform.position;
     }
@@ -108,16 +116,39 @@ public class EnemyAI : MonoBehaviour
         //Set destination, navmesh agent will lhandle the rest (see PlayerAI setState and Sneaking)
         state = EnemyState.WANDER;
         timer.Reset();
-        GameObject randGoal;
-        do
+
+        m_nav.destination = getNextWaypoint();
+    }
+
+    //Pick the next waypoint to wander to
+    private Vector3 getNextWaypoint()
+    {
+        if (followWaypointsInOrder)
         {
-            int randIndex = Random.Range(0, goals.Count);
-            randGoal = goals[randIndex];
+            if (isReversePatroling)
+            {
+                currentGoalIndex--;
+                if (currentGoalIndex == 0) isReversePatroling = false;
+            }
+            else
+            {
+                currentGoalIndex++;
+                if (currentGoalIndex == (goals.Count - 1)) isReversePatroling = true;
+            }
+            return goals[currentGoalIndex].transform.position;
+        }
+        else
+        {
+            GameObject randGoal;
+            do
+            {
+                int randIndex = Random.Range(0, goals.Count);
+                randGoal = goals[randIndex];
 
-        } while(Vector2.Distance(transform.position, randGoal.transform.position) < m_nav.stoppingDistance);
+            } while (Vector2.Distance(transform.position, randGoal.transform.position) < m_nav.stoppingDistance);
 
-        m_nav.destination = randGoal.transform.position;
-
+            return randGoal.transform.position;
+        }
     }
 
     private void setStatePersue()
@@ -129,17 +160,22 @@ public class EnemyAI : MonoBehaviour
 
     private bool canSeePlayer()
     {
-        Vector2 playerVector = (player.transform.position - gameObject.transform.position).normalized;
-        //Debug.Log("Player Direction: " + playerVector.ToString());
-
-        gameObject.GetComponent<BoxCollider2D>().enabled = false;
-        RaycastHit2D vectorHit = Physics2D.Raycast(gameObject.transform.position, playerVector, maxHearingDistance);
-        gameObject.GetComponent<BoxCollider2D>().enabled = true;
-
-        if (vectorHit && vectorHit.collider.gameObject.tag == "Player")
+        if (Vector2.Distance(player.transform.position, gameObject.transform.position) < maxVisionDistance)
         {
-            return true;
+            Vector2 playerVector = (player.transform.position - gameObject.transform.position).normalized;
+            //Debug.Log("Player Direction: " + playerVector.ToString());
+
+            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            RaycastHit2D vectorHit = Physics2D.Raycast(gameObject.transform.position, playerVector, maxVisionDistance);
+            gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
+            if (vectorHit && vectorHit.collider.gameObject.tag == "Player")
+            {
+                float angle = Vector2.Angle(gameObject.transform.right, playerVector);
+                if (angle < visionConeAngle) return true;
+                else if (vectorHit.distance < maxHearingDistance) return true;
+            }
         }
-        else return false;
+        return false;
     }
 }
