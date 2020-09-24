@@ -25,6 +25,8 @@ public class PlayerAI : MonoBehaviour
     private float maxIdleDelay = 3f;
 
 
+    List<Transform> coinLocations;
+
     private void Start()
     {
         idleTimer = new QuickTimer();
@@ -38,6 +40,8 @@ public class PlayerAI : MonoBehaviour
         }
         ChangePlayerState(PlayerStates.IDLE);
         m_animator = GetComponent<Animator>();
+
+        coinLocations = new List<Transform>();
     }
 
     GameObject minDest;
@@ -98,7 +102,7 @@ public class PlayerAI : MonoBehaviour
 
             if (!spawnedPointer)
             {
-                w.z = 0;
+                w.z = -1;
                 GameObject.Instantiate(pointer, w, pointer.transform.rotation);
                 spawnedPointer = true;
             }
@@ -152,5 +156,16 @@ public class PlayerAI : MonoBehaviour
         minDistance = float.PositiveInfinity;
         GameObject.Destroy(g);
         ChangePlayerState(PlayerStates.IDLE);
+    }
+    
+
+    public void CoinDropped(Transform t)
+    {
+        coinLocations.Add(t);
+    }
+
+    public void CoinDestroyed(Transform t)
+    {
+        coinLocations.Remove(t);
     }
 }
