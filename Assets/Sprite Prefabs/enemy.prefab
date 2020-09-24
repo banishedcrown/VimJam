@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 1537589513123013141}
   - component: {fileID: 1537589513123013142}
   - component: {fileID: 1537589513123013143}
-  - component: {fileID: 1537589513123013352}
   - component: {fileID: 1537589513123013353}
   - component: {fileID: 2505016881861320477}
-  - component: {fileID: 3291277202013282170}
+  - component: {fileID: 2112665698}
   m_Layer: 0
   m_Name: enemy
   m_TagString: Untagged
@@ -116,27 +115,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
---- !u!114 &1537589513123013352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1537589513123013354}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad705bba33f3642f4bc26cd844e12c6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 3.5
-  _angularSpeed: 500
-  _acceleration: 800
-  _stoppingDistance: 0
-  _autoBraking: 1
-  _radius: 0.5
-  _quality: 0
-  _priority: 50
-  _autoRepath: 1
 --- !u!61 &1537589513123013353
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -171,7 +149,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1537589513123013354}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -184,7 +162,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &3291277202013282170
+--- !u!114 &2112665698
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -193,19 +171,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1537589513123013354}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de30c7ee75feb114897e55b31be98d4c, type: 3}
+  m_Script: {fileID: 11500000, guid: ad705bba33f3642f4bc26cd844e12c6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3.5
   _angularSpeed: 120
   _acceleration: 8
-  _stoppingDistance: 0.25
+  _stoppingDistance: 0
   _autoBraking: 1
-  _destination: {x: 0, y: 0}
-  width: 50
-  height: 50
-  offsetMap: {x: 0, y: 0}
-  tiles: []
-  baked: 0
-  ClosedTile: {fileID: 0}
-  FreeTile: {fileID: 0}
+  _radius: 0.5
+  _quality: 0
+  _priority: 50
+  _autoRepath: 1
