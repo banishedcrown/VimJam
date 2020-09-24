@@ -125,7 +125,9 @@ public class EnemyAI : MonoBehaviour
     {
         if (followWaypointsInOrder)
         {
-            if (isReversePatroling)
+            if (currentGoalIndex >= goals.Count) currentGoalIndex = 0;
+            else currentGoalIndex++;
+            /*if (isReversePatroling)
             {
                 currentGoalIndex--;
                 if (currentGoalIndex == 0) isReversePatroling = false;
@@ -134,7 +136,7 @@ public class EnemyAI : MonoBehaviour
             {
                 currentGoalIndex++;
                 if (currentGoalIndex == (goals.Count - 1)) isReversePatroling = true;
-            }
+            }*/
             return goals[currentGoalIndex].transform.position;
         }
         else
