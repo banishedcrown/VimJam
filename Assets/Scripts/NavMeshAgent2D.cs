@@ -122,7 +122,7 @@ public class NavMeshAgent2D : MonoBehaviour
                 if (Vector2.Distance(transform.position, currentDestination.node.WorldPosition) > stoppingDistance)
                 {
                     Vector2 move_dir = (Vector3)currentDestination.node.WorldPosition - transform.position;
-                    r_body.velocity = move_dir.normalized * _speed;
+                    r_body.velocity = (move_dir).normalized  * _speed;
                 }
                 else
                 {
@@ -255,7 +255,7 @@ public class NavMeshAgent2D : MonoBehaviour
             Vector2Int pos = Vector2Int.RoundToInt(nnode.node.WorldPosition);
             int x = pos.x;
             int y = pos.y;
-            tiles[0].SetTile(new Vector3Int((int)nnode.node.WorldPosition.x, (int)nnode.node.WorldPosition.y, 0), FreeTile);
+            //tiles[0].SetTile(new Vector3Int((int)nnode.node.WorldPosition.x, (int)nnode.node.WorldPosition.y, 0), FreeTile);
             debugLabels.Add(new DebugLabel(pos, count.ToString() + ":" + nnode.node.F));
             count++;
             nodePath.AddFirst(nnode);
@@ -396,7 +396,7 @@ public class NavMeshAgent2D : MonoBehaviour
             }
             else
             {
-                tiles[0].SetTile(new Vector3Int(x - convX, y - convY, 0), ClosedTile);
+                //tiles[0].SetTile(new Vector3Int(x - convX, y - convY, 0), ClosedTile);
             }
         }
         print("minCost: " + minCost);
@@ -421,7 +421,7 @@ public class NavMeshAgent2D : MonoBehaviour
                     if ( newTile != null)
                     {
                         bakedMap[x , y].closed = true;
-                        t.SetTile(new Vector3Int(x - convX, y - convY, 0), ClosedTile);
+                        //t.SetTile(new Vector3Int(x - convX, y - convY, 0), ClosedTile);
                     }
                     else
                     {

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4947912047900064539}
   - component: {fileID: 2701969923692478685}
   - component: {fileID: 3927721387456844854}
+  - component: {fileID: 3927721386554287585}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -72,8 +73,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2050160415
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e521da2949a982447b4903122a2d96b1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -108,7 +109,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2701969923692478680}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad705bba33f3642f4bc26cd844e12c6c, type: 3}
   m_Name: 
@@ -142,7 +143,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &2701969923692478685
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -188,3 +189,28 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &3927721386554287585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2701969923692478680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de30c7ee75feb114897e55b31be98d4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 3.5
+  _angularSpeed: 120
+  _acceleration: 8
+  _stoppingDistance: 0.25
+  _autoBraking: 1
+  _destination: {x: 0, y: 0}
+  width: 50
+  height: 50
+  offsetMap: {x: 0, y: 0}
+  tiles: []
+  baked: 0
+  ClosedTile: {fileID: 11400000, guid: 307b524214bdf8e499666e489534c5ea, type: 2}
+  FreeTile: {fileID: 11400000, guid: f222e80ded0253d43a0ef8d3bd7506a9, type: 2}
