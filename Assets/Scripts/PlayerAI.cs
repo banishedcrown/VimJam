@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -77,10 +78,16 @@ public class PlayerAI : MonoBehaviour
 
                 break;
             case PlayerStates.SNEAKING:
-                
-                if(Vector2.Distance(transform.position, m_nav.destination) < m_nav.stoppingDistance)
+                if (coinLocations.Count == 0)
                 {
-                    ChangePlayerState(PlayerStates.IDLE);
+                    if (Vector2.Distance(transform.position, m_nav.destination) < m_nav.stoppingDistance)
+                    {
+                        ChangePlayerState(PlayerStates.IDLE);
+                    }
+                }
+                else
+                {
+                    m_nav.destination = getMinCoin();
                 }
                 break;
             case PlayerStates.DISTRACTED:
@@ -106,6 +113,23 @@ public class PlayerAI : MonoBehaviour
                 m_nav.destination = gameObject.transform.position;
                 break;
         }
+    }
+
+    private Vector2 getMinCoin()
+    {
+        float min = float.PositiveInfinity;
+        Vector2 minPos = Vector2.zero;
+
+        foreach(Transform g in coinLocations)
+        {
+            float d = Vector2.Distance(transform.position, g.position);
+            if ( d < min)
+            {
+                min = d;
+                minPos = g.position;
+            }
+        }
+        return minPos;
     }
 
     private void FixedUpdate()
@@ -152,7 +176,7 @@ public class PlayerAI : MonoBehaviour
             case PlayerStates.IDLE:
                 state = PlayerStates.IDLE;
                 idleTimer.Reset();
-                maxIdleDelay = Random.Range(2f, 5f);
+                maxIdleDelay = UnityEngine.Random.Range(2f, 5f);
                 break;
 
             case PlayerStates.DISTRACTED:
