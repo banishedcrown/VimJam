@@ -27,6 +27,8 @@ public class PlayerAI : MonoBehaviour
 
     GameProgressTracker gameManager;
 
+    AudioSource a_source;
+
 
     List<Transform> coinLocations;
 
@@ -46,7 +48,16 @@ public class PlayerAI : MonoBehaviour
 
         coinLocations = new List<Transform>();
 
-        gameManager = GameObject.FindGameObjectWithTag("Manager").GetComponent<GameProgressTracker>();
+        GameObject gm = GameObject.FindGameObjectWithTag("Manager");
+        gameManager = gm != null ? gm.GetComponent<GameProgressTracker>() : null;
+
+        if (gameManager != null) if (gameManager.canReturn)
+            {
+                transform.position = GameObject.Find("ReturnPosition").transform.position;
+                goals.Add(GameObject.Find("Exit"));
+            }
+
+        a_source = gameObject.GetComponent<AudioSource>();
     }
 
     GameObject minDest;
@@ -64,6 +75,8 @@ public class PlayerAI : MonoBehaviour
                 {
                     ChangePlayerState(PlayerStates.DISTRACTED);
                 }
+
+                a_source.Stop();
 
                 break;
             case PlayerStates.SNEAKING:
@@ -132,6 +145,12 @@ public class PlayerAI : MonoBehaviour
             m_animator.SetFloat("LastHorizontalSpeed", m_nav.velocity.normalized.x);
         }
 
+        if(state != PlayerStates.IDLE || state != PlayerStates.CAUGHT)
+        {
+            if(!a_source.isPlaying)
+                a_source.Play();
+        }
+
     }
 
 
@@ -159,8 +178,9 @@ public class PlayerAI : MonoBehaviour
         goals.Remove(g);
         minDest = null;
         minDistance = float.PositiveInfinity;
-        
-        gameManager.PlayerGotATreasure(g);
+
+        if (gameManager != null)
+            gameManager.PlayerGotATreasure(g);
         
         GameObject.Destroy(g);
         ChangePlayerState(PlayerStates.IDLE);
@@ -177,10 +197,16 @@ public class PlayerAI : MonoBehaviour
         coinLocations.Remove(t);
     }
 
+
+    public GameObject trapFront, trapBack;
     public void caughtPlayer()
     {
         ChangePlayerState(PlayerStates.CAUGHT);
         m_animator.Play("Caught");
+
+        GameObject.Instantiate(trapFront, gameObject.transform);
+        GameObject.Instantiate(trapBack, gameObject.transform);
+
         Invoke("reloadScene", 2f);
     }
 

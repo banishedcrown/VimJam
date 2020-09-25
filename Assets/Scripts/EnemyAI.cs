@@ -141,7 +141,9 @@ public class EnemyAI : MonoBehaviour
         print("Enemy caught the player!");
         if (collision.gameObject.tag == "Player")
         {
-            GameObject.Destroy(collision.gameObject);
+            collision.gameObject.SendMessage("CaughtPlayer");
+            setStateIdle();
+            
         }
     }
 
