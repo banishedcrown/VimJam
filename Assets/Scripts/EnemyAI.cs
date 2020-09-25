@@ -78,8 +78,7 @@ public class EnemyAI : MonoBehaviour
                 {
                     setStateWander();
                 }
-
-                alert_animator.Play("Entry");
+                m_animator.Play("Entry");
                 //else Leave destination set to self and continue
                 break;
             case EnemyState.WANDER:
@@ -136,11 +135,13 @@ public class EnemyAI : MonoBehaviour
     }
 
     //Caught the player!
+    private bool playerCaught = false;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         print("Enemy caught the player!");
         if (collision.gameObject.tag == "Player")
         {
+            playerCaught = true;
             collision.gameObject.SendMessage("caughtPlayer");
             setStateIdle();
             
@@ -172,7 +173,8 @@ public class EnemyAI : MonoBehaviour
     private void setStatePersue()
     {
         //set destination to player's location
-        alert_animator.Play("Alert");
+        if(!playerCaught)
+            alert_animator.Play("Alert");
         state = EnemyState.PERSUE;
         m_nav.destination = player.transform.position;
     }

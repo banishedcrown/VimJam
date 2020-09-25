@@ -21,9 +21,20 @@ public class GoalController : MonoBehaviour
     float currentDeflection = 0.0f;
     bool reversed = false;
 
+    GameProgressTracker gameManager;
+
     private void Start()
     {
         startPosition = transform.position;
+
+        GameObject gm = GameObject.FindGameObjectWithTag("Manager");
+        gameManager = gm != null ? gm.GetComponent<GameProgressTracker>() : null;
+
+        if (gameManager != null) if (gameManager.canReturn)
+        {
+            gameObject.active = false;
+            return;
+        }
     }
     private void FixedUpdate()
     {

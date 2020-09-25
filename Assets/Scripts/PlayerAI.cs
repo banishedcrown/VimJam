@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class PlayerAI : MonoBehaviour
 {
@@ -54,9 +55,14 @@ public class PlayerAI : MonoBehaviour
 
         if (gameManager != null) if (gameManager.canReturn)
             {
-                transform.position = GameObject.Find("ReturnPosition").transform.position;
-                goals.Add(GameObject.Find("Exit"));
+                GameObject pos = GameObject.Find("ReturnPosition");
+                m_nav.Warp(pos.transform.position);
+                GameObject g = GameObject.Find("Exit");
+                goals.Add(g);
+                g.GetComponent<doorController>().enabled = true;
             }
+
+        a_source = gameObject.GetComponent<AudioSource>();
 
     }
 
@@ -138,6 +144,8 @@ public class PlayerAI : MonoBehaviour
         {
             Vector3 w = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
+            
+            if (GameObject.Find("Walls").GetComponent<Tilemap>().GetTile(GameObject.Find("Grid").GetComponent<Grid>().WorldToCell(w)) != null) return;
 
             if (!spawnedPointer)
             {
@@ -188,6 +196,8 @@ public class PlayerAI : MonoBehaviour
     }
 
 
+    public AudioClip collectSound;
+
     public void RemoveGoal(GameObject g)
     {
         goals.Remove(g);
@@ -196,7 +206,9 @@ public class PlayerAI : MonoBehaviour
 
         if (gameManager != null)
             gameManager.PlayerGotATreasure(g);
-        
+
+        a_source.PlayOneShot(collectSound);
+
         GameObject.Destroy(g);
         ChangePlayerState(PlayerStates.IDLE);
     }
