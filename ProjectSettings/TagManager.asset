@@ -9,6 +9,7 @@ TagManager:
   - EnemyWaypoint
   - Foot
   - Enemy
+  - Manager
   layers:
   - Default
   - TransparentFX
