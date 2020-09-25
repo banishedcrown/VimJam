@@ -37,10 +37,17 @@ public class TrapScript : MonoBehaviour
     {
 
         s_renderer.sprite = activeState;
-        GameObject.Destroy(collision.gameObject);
+
+        collision.gameObject.transform.parent.gameObject.SendMessage("caughtPlayer");
+
         print("Game Over. Reloading scene.");
 
         //Reload the scene / respawn player
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Invoke("reloadScene", 2f);
+    }
+
+    void reloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
