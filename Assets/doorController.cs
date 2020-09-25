@@ -20,19 +20,29 @@ public class doorController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(!needsCompletion)
-            SceneManager.LoadScene(newScene);
+        if (!needsCompletion)
+        {
+            if (manager != null)
+            {
+                if (!manager.canReturn)
+                    SceneManager.LoadScene(newScene);
+            }
+            else
+            {
+                SceneManager.LoadScene(newScene);
+            }
+        }
 
         else
         {
             //do nothing right now.
-            if(manager != null)
+            if (manager != null)
             {
                 if (manager.canReturn)
                 {
                     SceneManager.LoadScene(newScene);
                 }
-            }    
+            }
         }
     }
 }

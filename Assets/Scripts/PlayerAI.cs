@@ -27,6 +27,8 @@ public class PlayerAI : MonoBehaviour
 
     GameProgressTracker gameManager;
 
+    AudioSource a_source;
+
 
     List<Transform> coinLocations;
 
@@ -55,6 +57,7 @@ public class PlayerAI : MonoBehaviour
                 goals.Add(GameObject.Find("Exit"));
             }
 
+        a_source = gameObject.GetComponent<AudioSource>();
     }
 
     GameObject minDest;
@@ -72,6 +75,8 @@ public class PlayerAI : MonoBehaviour
                 {
                     ChangePlayerState(PlayerStates.DISTRACTED);
                 }
+
+                a_source.Stop();
 
                 break;
             case PlayerStates.SNEAKING:
@@ -138,6 +143,12 @@ public class PlayerAI : MonoBehaviour
         {
             m_animator.SetFloat("LastVerticalSpeed", m_nav.velocity.normalized.y);
             m_animator.SetFloat("LastHorizontalSpeed", m_nav.velocity.normalized.x);
+        }
+
+        if(state != PlayerStates.IDLE || state != PlayerStates.CAUGHT)
+        {
+            if(!a_source.isPlaying)
+                a_source.Play();
         }
 
     }

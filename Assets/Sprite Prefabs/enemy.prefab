@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9caabe3809d241a43997f4550b871ddb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clip: {fileID: 8300000, guid: 7592c6662813cfe408c232dc43fcc293, type: 3}
+  clip: []
 --- !u!82 &3058906412182845263
 AudioSource:
   m_ObjectHideFlags: 0
@@ -285,8 +285,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2050160415
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -9033162075642301625, guid: 63daedb1ebb1bcd40960c43f01092b63,
     type: 3}
