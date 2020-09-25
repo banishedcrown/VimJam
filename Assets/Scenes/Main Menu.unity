@@ -308,7 +308,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1007,7 +1007,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &384367329
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1045,7 +1045,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioMixer: {fileID: 24100000, guid: 14613bddf5de51947842f53425cb01f6, type: 2}
-  resolutionDropdown: {fileID: 0}
+  resolutionDropdown: {fileID: 1608007809}
   slider: {fileID: 1424994601}
 --- !u!1 &406548528
 GameObject:
@@ -1614,7 +1614,8 @@ MonoBehaviour:
     chavezfk.itch.io
 
 
-    Anna C. Chavez
+    Anna
+    C. Chavez
 
     Programming
 
@@ -1626,7 +1627,8 @@ MonoBehaviour:
     mewbusi.blogspot.com
 
 
-    RyanAvx: Music
+    RyanAvx:
+    Music
 
     twitter.com/RyanAndBreezy'
   m_isRightToLeft: 0
@@ -1760,8 +1762,8 @@ RectTransform:
   m_Father: {fileID: 233134378}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 25, y: 0}
   m_SizeDelta: {x: 100, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4610,7 +4612,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2005389812
 RectTransform:
   m_ObjectHideFlags: 0
