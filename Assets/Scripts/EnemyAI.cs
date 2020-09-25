@@ -12,7 +12,7 @@ public class EnemyAI : MonoBehaviour
     private int currentGoalIndex = 0;
     private bool isReversePatroling = false;
 
-    private enum EnemyState { IDLE, WANDER, PERSUE };
+    private enum EnemyState { IDLE, WANDER, PERSUE, INVESTIGATE };
     private EnemyState state;
     private QuickTimer timer;
     private float idleDelay;
@@ -27,11 +27,14 @@ public class EnemyAI : MonoBehaviour
     public float visionConeAngle = 45; 
 
     GameObject player;
+    List<Vector3> pointers;
+    Vector3 lastSeenPointer;
 
     // Start is called before the first frame update
     void Start()
     {
         timer = new QuickTimer();
+        pointers = new List<Vector3>();
         maxIdleDelay = Random.Range(minIdleDelay, maxIdleDelay);
         m_nav = gameObject.GetComponent<NavMeshAgent2D>();
 
@@ -56,10 +59,8 @@ public class EnemyAI : MonoBehaviour
         switch (state)
         {
             case EnemyState.IDLE:
-                if (canSeePlayer())
-                {
-                    setStatePersue();
-                }
+                if (canSeePlayer()) { setStatePersue(); }
+                else if (canSeePointer()) { setStateInvestigate(); }
                 else if (timer.Elapsed() > maxIdleDelay) //todo: make the max random
                 {
                     setStateWander();
@@ -67,40 +68,58 @@ public class EnemyAI : MonoBehaviour
                 //else Leave destination set to self and continue
                 break;
             case EnemyState.WANDER:
-                if(canSeePlayer())
-                {
-                    setStatePersue();
-                }
+                if(canSeePlayer()) { setStatePersue(); }
+                else if (canSeePointer()) { setStateInvestigate(); }
                 //If we've reached our destination
                 else if (destinationReached())
                 {
                     setStateIdle();
                 }
                 //If we've been wandering for long enough, just stop.
-                else if (state == EnemyState.WANDER ) //&& timer.Elapsed() > maxWanderTime)
+                /*else if (state == EnemyState.WANDER && timer.Elapsed() > maxWanderTime)
                 {
                     setStateIdle();
-                }
+                }*/
                 break;
             case EnemyState.PERSUE:
+                bool seePlayer = canSeePlayer();
                 //If we've lost the player, idle.
-                if (!canSeePlayer() && m_nav.remainingDistance <= m_nav.stoppingDistance)
+                if (!seePlayer && destinationReached())
                 {
                     setStateIdle();
                 }
-                else
+                else if(seePlayer)
                 {
                     //Set destination to player's current position
                     m_nav.destination = player.transform.position;
                 }
                 break;
+            case EnemyState.INVESTIGATE:
+                //If we see a pointer, we'll go into this state
+                if (canSeePlayer()) { setStatePersue(); }
+                else if (destinationReached())
+                {
+                    setStateIdle();
+                }
+                //else keep going
+                break;
             default: break;
+        }
+    }
+
+    //Caught the player!
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        print("Enemy caught the player!");
+        if (collision.gameObject.tag == "Player")
+        {
+            GameObject.Destroy(collision.gameObject);
         }
     }
 
     private bool destinationReached()
     {
-        return Vector2.Distance(transform.position, m_nav.destination) < m_nav.stoppingDistance;
+        return Vector2.Distance(transform.position, m_nav.destination) <= m_nav.stoppingDistance;
     }
 
     private void setStateIdle()
@@ -118,6 +137,20 @@ public class EnemyAI : MonoBehaviour
         timer.Reset();
 
         m_nav.destination = getNextWaypoint();
+    }
+
+    private void setStatePersue()
+    {
+        //set destination to player's location
+        state = EnemyState.PERSUE;
+        m_nav.destination = player.transform.position;
+    }
+
+    private void setStateInvestigate()
+    {
+        //Set destination to the pointer's location that it saw
+        state = EnemyState.INVESTIGATE;
+        m_nav.destination = lastSeenPointer;
     }
 
     //Pick the next waypoint to wander to
@@ -153,13 +186,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void setStatePersue()
-    {
-        //set destination to player's location
-        state = EnemyState.PERSUE;
-        m_nav.destination = player.transform.position;
-    }
-
     private bool canSeePlayer()
     {
         if (Vector2.Distance(player.transform.position, gameObject.transform.position) < maxVisionDistance)
@@ -179,5 +205,50 @@ public class EnemyAI : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private bool canSeePointer()
+    {
+        foreach(var point in pointers)
+        {
+            if(canSeePointer(point)) return true;
+        }
+        return false;
+    }
+
+    private bool canSeePointer(Vector3 point)
+    {
+        if (Vector2.Distance(point, gameObject.transform.position) < maxVisionDistance)
+        {
+            //Get direction to the point
+            Vector2 pointVector = (point - gameObject.transform.position).normalized;
+            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            RaycastHit2D vectorHit = Physics2D.Raycast(gameObject.transform.position, pointVector, maxVisionDistance);
+            gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
+            //If the vector hits, it's a pointer, and it's the same pointer we're looking for
+            if (vectorHit && vectorHit.collider.gameObject.tag == "Pointer" && vectorHit.transform.position == point)
+            {
+                float angle = Vector2.Angle(gameObject.transform.right, pointVector);
+                if (angle < visionConeAngle)
+                {
+                    lastSeenPointer = point;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void CoinDropped(Transform transform)
+    {
+        Debug.Log("CoinDropped");
+        pointers.Add(transform.position);
+    }
+
+    public void CoinDestoryed(Transform transform)
+    {
+        Debug.Log("CoinDestroyed");
+        pointers.Remove(transform.position);
     }
 }
