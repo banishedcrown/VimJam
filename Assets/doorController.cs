@@ -7,16 +7,32 @@ public class doorController : MonoBehaviour
 {
     public bool needsCompletion = false;
     public string newScene;
+
+    GameProgressTracker manager;
+
+    private void Start()
+    {
+        GameObject m = GameObject.FindGameObjectWithTag("Manager");
+        if (m != null) {
+            manager = m.GetComponent<GameProgressTracker>();
+        }
+
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        print("Door trigger entered!");
-
         if(!needsCompletion)
             SceneManager.LoadScene(newScene);
 
         else
         {
             //do nothing right now.
+            if(manager != null)
+            {
+                if (manager.canReturn)
+                {
+                    SceneManager.LoadScene(newScene);
+                }
+            }    
         }
     }
 }

@@ -46,7 +46,15 @@ public class PlayerAI : MonoBehaviour
 
         coinLocations = new List<Transform>();
 
-        gameManager = GameObject.FindGameObjectWithTag("Manager").GetComponent<GameProgressTracker>();
+        GameObject gm = GameObject.FindGameObjectWithTag("Manager");
+        gameManager = gm != null ? gm.GetComponent<GameProgressTracker>() : null;
+
+        if (gameManager != null) if (gameManager.canReturn)
+            {
+                transform.position = GameObject.Find("ReturnPosition").transform.position;
+                goals.Add(GameObject.Find("Exit"));
+            }
+
     }
 
     GameObject minDest;
@@ -159,8 +167,9 @@ public class PlayerAI : MonoBehaviour
         goals.Remove(g);
         minDest = null;
         minDistance = float.PositiveInfinity;
-        
-        gameManager.PlayerGotATreasure(g);
+
+        if (gameManager != null)
+            gameManager.PlayerGotATreasure(g);
         
         GameObject.Destroy(g);
         ChangePlayerState(PlayerStates.IDLE);
@@ -177,10 +186,16 @@ public class PlayerAI : MonoBehaviour
         coinLocations.Remove(t);
     }
 
+
+    public GameObject trapFront, trapBack;
     public void caughtPlayer()
     {
         ChangePlayerState(PlayerStates.CAUGHT);
         m_animator.Play("Caught");
+
+        GameObject.Instantiate(trapFront, gameObject.transform);
+        GameObject.Instantiate(trapBack, gameObject.transform);
+
         Invoke("reloadScene", 2f);
     }
 

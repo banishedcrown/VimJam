@@ -296,7 +296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundMusic: {fileID: 0}
-  NumberOfTreasures: 0
+  NumberOfTreasures: 5
   canReturn: 0
 --- !u!1 &2466803238375366617
 GameObject:

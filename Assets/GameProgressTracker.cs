@@ -17,6 +17,8 @@ public class GameProgressTracker : MonoBehaviour
 
     private int CollectedTreasures = 0;
     public bool canReturn = false;
+
+    public bool isLevelComplete { get; set; }
     void Awake()
     {
         GameObject[] objs = GameObject.FindGameObjectsWithTag("Manager");
@@ -40,11 +42,12 @@ public class GameProgressTracker : MonoBehaviour
     public void PlayerGotATreasure(GameObject g)
     {
         trophies[CollectedTreasures].sprite = g.GetComponent<SpriteRenderer>().sprite;
-        Color newColor = trophies[CollectedTreasures].color;
-        newColor.a = 0;
+        Color newColor = Color.white;
+        newColor.a = 1;
         trophies[CollectedTreasures].color = newColor;
 
         CollectedTreasures++;
+        
         if (CollectedTreasures == NumberOfTreasures)
         {
             canReturn = true;
