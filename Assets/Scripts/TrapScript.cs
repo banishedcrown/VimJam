@@ -40,14 +40,11 @@ public class TrapScript : MonoBehaviour
 
         collision.gameObject.transform.parent.gameObject.SendMessage("caughtPlayer");
 
+        GameObject.Instantiate(trapFront, gameObject.transform);
+        GameObject.Instantiate(trapBack, gameObject.transform);
+
         print("Game Over. Reloading scene.");
 
         //Reload the scene / respawn player
-        Invoke("reloadScene", 2f);
-    }
-
-    void reloadScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
