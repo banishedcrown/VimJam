@@ -1554,6 +1554,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28f2c5b2addd3bd4a91aa446118e89bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trapFront: {fileID: 0}
+  trapBack: {fileID: 0}
+  inactiveState: {fileID: 0}
+  activeState: {fileID: 0}
 --- !u!1 &1983811242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1732,6 +1736,11 @@ PrefabInstance:
     - target: {fileID: 1537589513123013354, guid: 78a79c94b2ff7b946a0c3130b3ae2ea7,
         type: 3}
       propertyPath: m_Name
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1537589513123013354, guid: 78a79c94b2ff7b946a0c3130b3ae2ea7,
+        type: 3}
+      propertyPath: m_TagString
       value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
