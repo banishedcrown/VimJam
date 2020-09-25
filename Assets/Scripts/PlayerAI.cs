@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerAI : MonoBehaviour
 {
@@ -167,5 +168,17 @@ public class PlayerAI : MonoBehaviour
     public void CoinDestroyed(Transform t)
     {
         coinLocations.Remove(t);
+    }
+
+    public void caughtPlayer()
+    {
+        ChangePlayerState(PlayerStates.CAUGHT);
+        m_animator.Play("Caught");
+        Invoke("reloadScene", 2f);
+    }
+
+    void reloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

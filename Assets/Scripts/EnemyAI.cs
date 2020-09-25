@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
@@ -27,8 +26,15 @@ public class EnemyAI : MonoBehaviour
     public float visionConeAngle = 45; 
 
     GameObject player;
+    Animator m_animator;
+
+    GameObject alertSprite;
+    Animator alert_animator;
+
     List<Vector3> pointers;
     Vector3 lastSeenPointer;
+
+    Vector2 lastMoveDir = -Vector2.up;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +43,8 @@ public class EnemyAI : MonoBehaviour
         pointers = new List<Vector3>();
         maxIdleDelay = Random.Range(minIdleDelay, maxIdleDelay);
         m_nav = gameObject.GetComponent<NavMeshAgent2D>();
+
+        m_animator = gameObject.GetComponent<Animator>();
 
         //Initialize player reference
         var players = GameObject.FindGameObjectsWithTag("Player");
@@ -50,12 +58,17 @@ public class EnemyAI : MonoBehaviour
             var goalList = GameObject.FindGameObjectsWithTag("EnemyWaypoint");
             goals = new List<GameObject>(goalList);
         }
+
+        alertSprite = transform.Find("AlertSprite").gameObject;
+        alert_animator = alertSprite.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (m_nav.velocity != Vector2.zero) lastMoveDir = m_nav.velocity.normalized;
         Debug.Log("Enemy in state " + state.ToString() + "and Player position is "+player.transform.position.ToString());
+        Debug.DrawRay(transform.position, lastMoveDir * maxVisionDistance,Color.white);
         switch (state)
         {
             case EnemyState.IDLE:
@@ -65,6 +78,8 @@ public class EnemyAI : MonoBehaviour
                 {
                     setStateWander();
                 }
+
+                alert_animator.Play("Entry");
                 //else Leave destination set to self and continue
                 break;
             case EnemyState.WANDER:
@@ -107,6 +122,19 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+
+        m_animator.SetFloat("VerticalSpeed", m_nav.velocity.normalized.y);
+        m_animator.SetFloat("HorizontalSpeed", m_nav.velocity.normalized.x);
+
+        if (m_nav.velocity != Vector2.zero)
+        {
+            m_animator.SetFloat("LastVerticalSpeed", m_nav.velocity.normalized.y);
+            m_animator.SetFloat("LastHorizontalSpeed", m_nav.velocity.normalized.x);
+        }
+    }
+
     //Caught the player!
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -142,6 +170,7 @@ public class EnemyAI : MonoBehaviour
     private void setStatePersue()
     {
         //set destination to player's location
+        alert_animator.Play("Alert");
         state = EnemyState.PERSUE;
         m_nav.destination = player.transform.position;
     }
@@ -159,7 +188,9 @@ public class EnemyAI : MonoBehaviour
         if (followWaypointsInOrder)
         {
             if (currentGoalIndex >= goals.Count) currentGoalIndex = 0;
-            else currentGoalIndex++;
+
+            Vector3 nextgoal = goals[currentGoalIndex].transform.position;
+            currentGoalIndex++;
             /*if (isReversePatroling)
             {
                 currentGoalIndex--;
@@ -170,7 +201,7 @@ public class EnemyAI : MonoBehaviour
                 currentGoalIndex++;
                 if (currentGoalIndex == (goals.Count - 1)) isReversePatroling = true;
             }*/
-            return goals[currentGoalIndex].transform.position;
+            return nextgoal;
         }
         else
         {
@@ -195,11 +226,13 @@ public class EnemyAI : MonoBehaviour
 
             gameObject.GetComponent<BoxCollider2D>().enabled = false;
             RaycastHit2D vectorHit = Physics2D.Raycast(gameObject.transform.position, playerVector, maxVisionDistance);
+            Debug.DrawRay(transform.position, playerVector, Color.green);
             gameObject.GetComponent<BoxCollider2D>().enabled = true;
 
             if (vectorHit && vectorHit.collider.gameObject.tag == "Player")
             {
-                float angle = Vector2.Angle(gameObject.transform.right, playerVector);
+                float angle = Vector2.Angle(lastMoveDir, playerVector);
+                print(angle);
                 if (angle < visionConeAngle) return true;
                 else if (vectorHit.distance < maxHearingDistance) return true;
             }
@@ -229,7 +262,7 @@ public class EnemyAI : MonoBehaviour
             //If the vector hits, it's a pointer, and it's the same pointer we're looking for
             if (vectorHit && vectorHit.collider.gameObject.tag == "Pointer" && vectorHit.transform.position == point)
             {
-                float angle = Vector2.Angle(gameObject.transform.right, pointVector);
+                float angle = Vector2.Angle(lastMoveDir, pointVector);
                 if (angle < visionConeAngle)
                 {
                     lastSeenPointer = point;
@@ -246,7 +279,7 @@ public class EnemyAI : MonoBehaviour
         pointers.Add(transform.position);
     }
 
-    public void CoinDestoryed(Transform transform)
+    public void CoinDestroyed(Transform transform)
     {
         Debug.Log("CoinDestroyed");
         pointers.Remove(transform.position);
