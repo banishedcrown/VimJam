@@ -57,7 +57,6 @@ public class PlayerAI : MonoBehaviour
                 goals.Add(GameObject.Find("Exit"));
             }
 
-        a_source = gameObject.GetComponent<AudioSource>();
     }
 
     GameObject minDest;
@@ -75,8 +74,6 @@ public class PlayerAI : MonoBehaviour
                 {
                     ChangePlayerState(PlayerStates.DISTRACTED);
                 }
-
-                a_source.Stop();
 
                 break;
             case PlayerStates.SNEAKING:
@@ -145,12 +142,6 @@ public class PlayerAI : MonoBehaviour
             m_animator.SetFloat("LastHorizontalSpeed", m_nav.velocity.normalized.x);
         }
 
-        if(state != PlayerStates.IDLE || state != PlayerStates.CAUGHT)
-        {
-            if(!a_source.isPlaying)
-                a_source.Play();
-        }
-
     }
 
 
@@ -201,11 +192,14 @@ public class PlayerAI : MonoBehaviour
     public GameObject trapFront, trapBack;
     public void caughtPlayer()
     {
+        if (state != PlayerStates.CAUGHT)
+        {
+            GameObject.Instantiate(trapFront, gameObject.transform);
+            GameObject.Instantiate(trapBack, gameObject.transform);
+        }
+
         ChangePlayerState(PlayerStates.CAUGHT);
         m_animator.Play("Caught");
-
-        GameObject.Instantiate(trapFront, gameObject.transform);
-        GameObject.Instantiate(trapBack, gameObject.transform);
 
         Invoke("reloadScene", 2f);
     }
