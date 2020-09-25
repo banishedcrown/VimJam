@@ -14,7 +14,7 @@ public class MainMenu : MonoBehaviour
     public void MainMenuBack()
     {
         Debug.Log("GoingBack");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 2);
+        SceneManager.LoadScene(0);
     }
 
     public void WebsiteURL()
