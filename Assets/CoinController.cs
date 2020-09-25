@@ -12,6 +12,16 @@ public class CoinController : MonoBehaviour
     private void Start()
     {
         timer = new QuickTimer();
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject player = GameObject.Find("Player");
+        
+        if(enemies.Length != 0)
+            foreach (GameObject e in enemies)
+            {
+                e.SendMessage("CoinDropped", gameObject.transform);
+            }
+
+        player.SendMessage("CoinDropped", gameObject.transform);
     }
     private void Update()
     {
@@ -29,4 +39,19 @@ public class CoinController : MonoBehaviour
             GameObject.Destroy(gameObject);
         }
     }
+
+    private void OnDestroy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject player = GameObject.Find("Player");
+
+        if (enemies.Length != 0)
+            foreach (GameObject e in enemies)
+            {
+                e.SendMessage("CoinDestroyed", gameObject.transform);
+            }
+
+        player.SendMessage("CoinDestroyed", gameObject.transform);
+    }
+
 }

@@ -6,9 +6,16 @@ using UnityEngine.SceneManagement;
 public class TrapScript : MonoBehaviour
 {
     // Start is called before the first frame update
+
+    public GameObject trapFront,trapBack;
+    public Sprite inactiveState, activeState;
+
+    private SpriteRenderer s_renderer;
+
     void Start()
     {
-        
+        s_renderer = GetComponent<SpriteRenderer>();
+        s_renderer.sprite = inactiveState;
     }
 
     // Update is called once per frame
@@ -20,7 +27,7 @@ public class TrapScript : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         print("Trap triggered!");
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Foot")
         {
             trapTriggered(collision);
         }
@@ -28,10 +35,12 @@ public class TrapScript : MonoBehaviour
 
     void trapTriggered(Collider2D collision)
     {
+
+        s_renderer.sprite = activeState;
         GameObject.Destroy(collision.gameObject);
         print("Game Over. Reloading scene.");
 
         //Reload the scene / respawn player
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
