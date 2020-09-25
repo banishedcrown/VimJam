@@ -140,6 +140,11 @@ public class PlayerAI : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
         if (Input.GetMouseButton(0))
         {
             Vector3 w = Camera.main.ScreenToWorldPoint(Input.mousePosition);
