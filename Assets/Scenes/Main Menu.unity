@@ -1695,6 +1695,36 @@ PrefabInstance:
       propertyPath: backgroundMusic
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3467392576365046375, guid: 01564103da0a0a148bfb571a284575d5,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4310440348862957142, guid: 01564103da0a0a148bfb571a284575d5,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4310440348862957142, guid: 01564103da0a0a148bfb571a284575d5,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4310440348862957142, guid: 01564103da0a0a148bfb571a284575d5,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4310440348862957142, guid: 01564103da0a0a148bfb571a284575d5,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6161855955147201747, guid: 01564103da0a0a148bfb571a284575d5,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01564103da0a0a148bfb571a284575d5, type: 3}
 --- !u!1 &1743116604 stripped

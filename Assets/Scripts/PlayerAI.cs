@@ -25,6 +25,8 @@ public class PlayerAI : MonoBehaviour
     QuickTimer idleTimer;
     private float maxIdleDelay = 3f;
 
+    GameProgressTracker gameManager;
+
 
     List<Transform> coinLocations;
 
@@ -43,6 +45,8 @@ public class PlayerAI : MonoBehaviour
         m_animator = GetComponent<Animator>();
 
         coinLocations = new List<Transform>();
+
+        gameManager = GameObject.FindGameObjectWithTag("Manager").GetComponent<GameProgressTracker>();
     }
 
     GameObject minDest;
@@ -155,6 +159,9 @@ public class PlayerAI : MonoBehaviour
         goals.Remove(g);
         minDest = null;
         minDistance = float.PositiveInfinity;
+        
+        gameManager.PlayerGotATreasure(g);
+        
         GameObject.Destroy(g);
         ChangePlayerState(PlayerStates.IDLE);
     }
