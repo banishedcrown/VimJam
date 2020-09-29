@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GoalController : MonoBehaviour
 {
+
+    public int id = 0;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         print("trigger entered!");

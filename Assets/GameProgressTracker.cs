@@ -39,16 +39,14 @@ public class GameProgressTracker : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void PlayerGotATreasure(GameObject g)
+    public void PlayerGotATreasure(GameObject g, int id)
     {
-        trophies[CollectedTreasures].sprite = g.GetComponent<SpriteRenderer>().sprite;
+        trophies[id].sprite = g.GetComponent<SpriteRenderer>().sprite;
         Color newColor = Color.white;
         newColor.a = 1;
-        trophies[CollectedTreasures].color = newColor;
+        trophies[id].color = newColor;
 
-        CollectedTreasures++;
-        
-        if (CollectedTreasures == NumberOfTreasures)
+        if (id == NumberOfTreasures - 1)
         {
             canReturn = true;
         }

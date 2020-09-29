@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(BoxCollider2D))]
+
+//[RequireComponent(typeof(VisionCone))]
 
 public class EnemyAI : MonoBehaviour
 {
@@ -35,13 +39,16 @@ public class EnemyAI : MonoBehaviour
     Vector3 lastSeenPointer;
 
     Vector2 lastMoveDir = -Vector2.up;
+    VisionCone vision;
+
+    [SerializeField] private bool useOnlyMinIdle = true;
 
     // Start is called before the first frame update
     void Start()
     {
         timer = new QuickTimer();
         pointers = new List<Vector3>();
-        maxIdleDelay = Random.Range(minIdleDelay, maxIdleDelay);
+        maxIdleDelay = useOnlyMinIdle ? minIdleDelay : Random.Range(minIdleDelay, maxIdleDelay);
         m_nav = gameObject.GetComponent<NavMeshAgent2D>();
 
         m_animator = gameObject.GetComponent<Animator>();
@@ -61,6 +68,16 @@ public class EnemyAI : MonoBehaviour
 
         alertSprite = transform.Find("AlertSprite").gameObject;
         alert_animator = alertSprite.GetComponent<Animator>();
+
+        vision = GetComponentInChildren<VisionCone>();
+        vision.viewDistance = maxVisionDistance;
+        vision.fov = visionConeAngle * 2;
+
+        Vector3 hearingCircleScale = transform.Find("VisionCircle").localScale;
+        hearingCircleScale.x = 2f * maxHearingDistance;
+        hearingCircleScale.y = 2f * maxHearingDistance;
+        transform.Find("VisionCircle").localScale = hearingCircleScale;
+
     }
 
     // Update is called once per frame
@@ -132,10 +149,17 @@ public class EnemyAI : MonoBehaviour
             m_animator.SetFloat("LastVerticalSpeed", m_nav.velocity.normalized.y);
             m_animator.SetFloat("LastHorizontalSpeed", m_nav.velocity.normalized.x);
         }
+
+        
+        vision.setAimDirection(lastMoveDir);
+        vision.setOrigin(m_nav.transform.position);
+
     }
 
     //Caught the player!
     private bool playerCaught = false;
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         print("Enemy caught the player!");
@@ -156,7 +180,7 @@ public class EnemyAI : MonoBehaviour
     private void setStateIdle()
     {
         state = EnemyState.IDLE;
-        maxIdleDelay = Random.Range(minIdleDelay, maxIdleDelay);
+        maxIdleDelay = useOnlyMinIdle ? minIdleDelay : Random.Range(minIdleDelay, maxIdleDelay);
         timer.Reset();
         m_nav.destination = gameObject.transform.position;
     }

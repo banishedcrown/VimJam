@@ -10,7 +10,8 @@ public class PlayerAI : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public GameObject pointer;
+    public GameObject playerCoin;
+    public GameObject enemyCoin;
     private bool spawnedPointer = false;
 
     [Range(1, 10)]
@@ -145,7 +146,7 @@ public class PlayerAI : MonoBehaviour
         {
             Application.Quit();
         }
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
             Vector3 w = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -155,7 +156,8 @@ public class PlayerAI : MonoBehaviour
             if (!spawnedPointer)
             {
                 w.z = -1;
-                GameObject.Instantiate(pointer, w, pointer.transform.rotation);
+                GameObject p = Input.GetMouseButton(0) ? playerCoin : enemyCoin;
+                GameObject.Instantiate(p, w, p.transform.rotation);
                 spawnedPointer = true;
             }
 
@@ -205,12 +207,14 @@ public class PlayerAI : MonoBehaviour
 
     public void RemoveGoal(GameObject g)
     {
+
         goals.Remove(g);
         minDest = null;
         minDistance = float.PositiveInfinity;
 
+        int treasureID = g.GetComponent<GoalController>().id;
         if (gameManager != null)
-            gameManager.PlayerGotATreasure(g);
+            gameManager.PlayerGotATreasure(g, treasureID);
 
         a_source.PlayOneShot(collectSound);
 

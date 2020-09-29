@@ -1350,6 +1350,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5941832619502578778, guid: 188cf7cde2e6be24499f48f74f14d02e,
+        type: 3}
+      propertyPath: id
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 162958403150800613, guid: 188cf7cde2e6be24499f48f74f14d02e,
         type: 3}
       propertyPath: m_Name
@@ -3866,7 +3871,7 @@ GameObject:
   - component: {fileID: 3385928293305489380}
   - component: {fileID: 8502940375258281388}
   - component: {fileID: 5842052828034165307}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}

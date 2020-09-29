@@ -100,7 +100,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b6bfd204c5eb8844bb78ab4fd67ee19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointer: {fileID: 3859178286852806670, guid: e11ce90a3b7388846be6a8da77b1b97c, type: 3}
+  playerCoin: {fileID: 3859178286852806670, guid: e11ce90a3b7388846be6a8da77b1b97c,
+    type: 3}
+  enemyCoin: {fileID: 3859178286852806670, guid: 8a80ef1bc1ef7f84586735967e2c3dea,
+    type: 3}
   hearingRange: 8
   seeingRange: 10
   collectSound: {fileID: 8300000, guid: f61e1ebc3ec8906489499d08e0677e1b, type: 3}

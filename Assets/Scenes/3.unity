@@ -563,7 +563,7 @@ GameObject:
   - component: {fileID: 430671770}
   - component: {fileID: 430671769}
   - component: {fileID: 430671768}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4000,6 +4000,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5941832619502578778, guid: 188cf7cde2e6be24499f48f74f14d02e,
+        type: 3}
+      propertyPath: id
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 162958403150800613, guid: 188cf7cde2e6be24499f48f74f14d02e,
         type: 3}
       propertyPath: m_Name
@@ -4075,6 +4080,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5941832619502578778, guid: 188cf7cde2e6be24499f48f74f14d02e,
+        type: 3}
+      propertyPath: id
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 162958403150800613, guid: 188cf7cde2e6be24499f48f74f14d02e,
         type: 3}
       propertyPath: m_Name

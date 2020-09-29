@@ -4,37 +4,55 @@ using UnityEngine;
 
 public class pointerController : MonoBehaviour
 {
-
+    [SerializeField] bool playerCoin = true;
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player" && playerCoin)
         {
             GameObject.Destroy(gameObject);
+        }
+        else
+        {
+            if(collision.gameObject.tag == "Enemy" && !playerCoin)
+            {
+                GameObject.Destroy(gameObject);
+            }
         }
     }
 
     private void Start()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        GameObject player = GameObject.Find("Player");
-        foreach(GameObject e in enemies)
-        {
-            e.SendMessage("CoinDropped", gameObject.transform);
-        }
 
-        player.SendMessage("CoinDropped", gameObject.transform);
+        if (playerCoin)
+        {
+            GameObject player = GameObject.Find("Player");
+            player.SendMessage("CoinDropped", gameObject.transform);
+        }
+        else
+        {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (GameObject e in enemies)
+            {
+                e.SendMessage("CoinDropped", gameObject.transform);
+            }
+        }
     }
 
     private void OnDestroy()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        GameObject player = GameObject.Find("Player");
-        foreach (GameObject e in enemies)
+        if (playerCoin)
         {
-            e.SendMessage("CoinDestroyed", gameObject.transform);
+            GameObject player = GameObject.Find("Player");
+            player.SendMessage("CoinDestroyed", gameObject.transform);
         }
-
-        player.SendMessage("CoinDestroyed", gameObject.transform);
+        else
+        {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (GameObject e in enemies)
+            {
+                e.SendMessage("CoinDestroyed", gameObject.transform);
+            }
+        }
     }
 
 }
