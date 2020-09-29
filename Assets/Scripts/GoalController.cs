@@ -32,7 +32,7 @@ public class GoalController : MonoBehaviour
         GameObject gm = GameObject.FindGameObjectWithTag("Manager");
         gameManager = gm != null ? gm.GetComponent<GameProgressTracker>() : null;
 
-        if (gameManager != null) if (gameManager.canReturn)
+        if (gameManager != null) if (gameManager.getTrophies()[id].color == Color.white )
         {
             gameObject.active = false;
             return;

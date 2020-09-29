@@ -43,7 +43,7 @@ public class GameProgressTracker : MonoBehaviour
     {
         trophies[id].sprite = g.GetComponent<SpriteRenderer>().sprite;
         Color newColor = Color.white;
-        newColor.a = 1;
+        
         trophies[id].color = newColor;
 
         if (id == NumberOfTreasures - 1)
@@ -65,4 +65,6 @@ public class GameProgressTracker : MonoBehaviour
             r.color = newColor;
         }
     }
+
+    public Image[] getTrophies() { return trophies; }
 }
