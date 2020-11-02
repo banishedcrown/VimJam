@@ -161,7 +161,7 @@ public class PlayerAI : MonoBehaviour
                 spawnedPointer = true;
             }
 
-            if (state != PlayerStates.CAUGHT && Vector2.Distance(w, transform.position) < hearingRange)
+            if (Input.GetMouseButton(0) && state != PlayerStates.CAUGHT && Vector2.Distance(w, transform.position) < hearingRange)
             {
                 GetComponent<NavMeshAgent2D>().destination = w;
                 ChangePlayerState(PlayerStates.SNEAKING);
