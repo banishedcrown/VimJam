@@ -84,7 +84,7 @@ public class EnemyAI : MonoBehaviour
     void Update()
     {
         if (m_nav.velocity != Vector2.zero) lastMoveDir = m_nav.velocity.normalized;
-        Debug.Log("Enemy in state " + state.ToString() + "and Player position is "+player.transform.position.ToString());
+        //Debug.Log("Enemy in state " + state.ToString() + " and Player position is "+player.transform.position.ToString());
         Debug.DrawRay(transform.position, lastMoveDir * maxVisionDistance,Color.white);
         switch (state)
         {
@@ -260,7 +260,6 @@ public class EnemyAI : MonoBehaviour
             if (vectorHit && vectorHit.collider.gameObject.tag == "Player")
             {
                 float angle = Vector2.Angle(lastMoveDir, playerVector);
-                print(angle);
                 if (angle < visionConeAngle) return true;
                 else if (vectorHit.distance < maxHearingDistance) return true;
             }

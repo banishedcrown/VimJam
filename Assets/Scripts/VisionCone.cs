@@ -49,8 +49,6 @@ public class VisionCone : MonoBehaviour
             Vector3 vertex;
             Vector3 lookAngle = UtilsClass.GetVectorFromAngle((int)angle);
             RaycastHit2D hit = Physics2D.Raycast(origin, lookAngle, distance, layermask);
-           
-            print(origin);
 
             if(hit.collider == null)
             {
