@@ -9,16 +9,16 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: 3f6b65d198223074a8380f2b212990af
   - enabled: 1
-    path: Assets/Scenes/1.unity
+    path: Assets/Scenes/GameJam Level/1.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/2.unity
+    path: Assets/Scenes/GameJam Level/2.unity
     guid: c41cdeac213f24c478523c40a51a332f
   - enabled: 1
-    path: Assets/Scenes/3.unity
+    path: Assets/Scenes/GameJam Level/3.unity
     guid: d9c41da066eb4b740b8308d08810dff6
   - enabled: 1
-    path: Assets/Scenes/4.unity
+    path: Assets/Scenes/GameJam Level/4.unity
     guid: 71c07bbfbd06553429cb8dc7a42c6748
   - enabled: 1
     path: Assets/Scenes/Ending Screen.unity
