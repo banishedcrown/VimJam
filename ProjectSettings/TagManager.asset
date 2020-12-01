@@ -47,6 +47,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Front
+  - name: Traps and Switches
     uniqueID: 2050160415
+    locked: 0
+  - name: Walls
+    uniqueID: 11752413
+    locked: 0
+  - name: Vision Cones
+    uniqueID: 743746863
+    locked: 0
+  - name: Players, Guards, Coins, and Chests
+    uniqueID: 230550283
+    locked: 0
+  - name: Doors
+    uniqueID: 3233118007
     locked: 0
