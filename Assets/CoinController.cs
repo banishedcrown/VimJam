@@ -11,10 +11,12 @@ public class CoinController : MonoBehaviour
 
     private void Start()
     {
+        GameObject player = GameObject.Find("Player");
+        SpriteRenderer s_rend = GetComponent<SpriteRenderer>();
+        s_rend.sortingOrder = transform.position.y > player.transform.position.y ? player.GetComponent<SpriteRenderer>().sortingOrder - 1 : player.GetComponent<SpriteRenderer>().sortingOrder + 1;
         timer = new QuickTimer();
         if (playerCoin)
         {
-            GameObject player = GameObject.Find("Player");
             player.SendMessage("CoinDropped", gameObject.transform);
         }
         else
