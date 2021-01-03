@@ -9,13 +9,16 @@ public class cameraController : MonoBehaviour
     private Vector3 startPosition;
 
     private GameObject player;
-
+    private Camera cam;
 
     // Start is called before the first frame update
     void Start()
     {
         startPosition = transform.position;
         player = GameObject.Find("Player");
+        cam = GetComponent<Camera>();
+        cam.transparencySortMode = TransparencySortMode.CustomAxis;
+        cam.transparencySortAxis = Vector3.up;
     }
 
     // Update is called once per frame
