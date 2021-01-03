@@ -26,7 +26,7 @@ public class PlayerAI : MonoBehaviour
     PlayerStates state;
 
     QuickTimer idleTimer;
-    private float maxIdleDelay = 3f;
+    public float maxIdleDelay = 3f;
 
     GameProgressTracker gameManager;
 
@@ -76,7 +76,7 @@ public class PlayerAI : MonoBehaviour
         switch (state)
         {
             case PlayerStates.IDLE:
-                m_nav.destination = gameObject.transform.position;
+                
                 //print("max vs elapsed" + maxIdleDelay + "," + idleTimer.Elapsed());
                 if (idleTimer.Elapsed() > maxIdleDelay)
                 {
@@ -175,6 +175,8 @@ public class PlayerAI : MonoBehaviour
         m_animator.SetFloat("VerticalSpeed", m_nav.velocity.normalized.y);
         m_animator.SetFloat("HorizontalSpeed", m_nav.velocity.normalized.x);
 
+        print(m_nav.velocity.normalized.y);
+
         if(m_nav.velocity != Vector2.zero)
         {
             m_animator.SetFloat("LastVerticalSpeed", m_nav.velocity.normalized.y);
@@ -190,8 +192,10 @@ public class PlayerAI : MonoBehaviour
         {
             case PlayerStates.IDLE:
                 state = PlayerStates.IDLE;
+                m_nav.destination = transform.position;
+                m_nav.Warp(transform.position);
                 idleTimer.Reset();
-                maxIdleDelay = UnityEngine.Random.Range(2f, 5f);
+                //maxIdleDelay = UnityEngine.Random.Range(2f, 5f);
                 break;
 
             case PlayerStates.DISTRACTED:
