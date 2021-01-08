@@ -43,6 +43,8 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] private bool useOnlyMinIdle = true;
 
+    private float originalSpeed = 0.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,6 +80,7 @@ public class EnemyAI : MonoBehaviour
         hearingCircleScale.y = 2f * maxHearingDistance;
         transform.Find("VisionCircle").localScale = hearingCircleScale;
 
+        this.originalSpeed = m_nav.speed;
     }
 
     // Update is called once per frame
@@ -310,5 +313,10 @@ public class EnemyAI : MonoBehaviour
     {
         Debug.Log("CoinDestroyed");
         pointers.Remove(transform.position);
+    }
+
+    public void ChangeSpeed(float change)
+    {
+        m_nav.speed = this.originalSpeed * change;
     }
 }

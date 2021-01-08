@@ -12804,6 +12804,8 @@ GameObject:
   - component: {fileID: 1956684207}
   - component: {fileID: 1956684209}
   - component: {fileID: 1956684208}
+  - component: {fileID: 1956684211}
+  - component: {fileID: 1956684210}
   m_Layer: 0
   m_Name: Stairs
   m_TagString: Untagged
@@ -12958,6 +12960,35 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1956684210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956684206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dbe2619f93569948b693cdc1191f12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reductionPercent: 0.6
+--- !u!19719996 &1956684211
+TilemapCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956684206}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_MaximumTileChangeCount: 1000
+  m_ExtrusionFactor: 0.00001
 --- !u!1001 &2020437502
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13025,6 +13056,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2701969923692478685, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701969923692478685, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701969923692478685, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701969923692478685, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701969923692478685, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2701969923692478686, guid: 4ea48f76586ddcb429192f3ec627145d,
         type: 3}
       propertyPath: _radius
@@ -13047,13 +13103,44 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2701969923692478687, guid: 4ea48f76586ddcb429192f3ec627145d,
         type: 3}
-      propertyPath: m_SpriteSortPoint
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6527381925275595238, guid: b140074dfc699c142909a12765533c7c,
+        type: 3}
+    - target: {fileID: 3360233262057497888, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3927721387456844860, guid: 4ea48f76586ddcb429192f3ec627145d,
         type: 3}
       propertyPath: hearingRange
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7762159500893657254, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7762159500893657254, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7762159500893657254, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_UsedByComposite
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7762159500893657254, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_AutoTiling
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7762159500893657254, guid: 4ea48f76586ddcb429192f3ec627145d,
+        type: 3}
+      propertyPath: m_UsedByEffector
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ea48f76586ddcb429192f3ec627145d, type: 3}

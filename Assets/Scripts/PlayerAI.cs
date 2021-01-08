@@ -32,6 +32,7 @@ public class PlayerAI : MonoBehaviour
 
     AudioSource a_source;
 
+    private float originalSpeed = 0.0f;
 
     List<Transform> coinLocations;
 
@@ -65,6 +66,7 @@ public class PlayerAI : MonoBehaviour
 
         a_source = gameObject.GetComponent<AudioSource>();
 
+        this.originalSpeed = m_nav.speed;
     }
 
     GameObject minDest;
@@ -256,5 +258,10 @@ public class PlayerAI : MonoBehaviour
     void reloadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ChangeSpeed(float change)
+    {  
+        m_nav.speed = this.originalSpeed * change;
     }
 }
